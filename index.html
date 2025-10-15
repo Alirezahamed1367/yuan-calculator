@@ -329,6 +329,7 @@ td {
   gap: 12px;
   z-index: 1000;
   animation: slideIn 0.3s ease;
+  max-width: 350px;
 }
 
 @keyframes slideIn {
@@ -466,8 +467,8 @@ td {
         <div class="market-value">
           <div class="label">قیمت تتر به تومان</div>
           <div class="value" id="marketRate">—</div>
-          <div class="source" id="marketSource">در انتظار دریافت...</div>
-          <div class="source" id="lastUpdate" style="margin-top: 8px;">آخرین بروزرسانی: —</div>
+          <div class="source" id="marketSource">کلیک کنید برای دریافت نرخ</div>
+          <div class="source" id="lastUpdate" style="margin-top: 8px;"></div>
         </div>
         <div class="btn-group">
           <button class="btn btn-primary" id="btnFetch">
@@ -631,7 +632,7 @@ td {
     <div class="card col-12 no-print">
       <div class="card-title">
         <span class="card-icon">💾</span>
-        ثبت سفارش در Google Sheet
+        ذخیره سفارش
       </div>
       <div class="row-2">
         <div class="form-group">
@@ -647,11 +648,16 @@ td {
         <label class="form-label">یادداشت نهایی</label>
         <textarea class="form-textarea" id="inpFinalNote" rows="2"></textarea>
       </div>
-      <button class="btn btn-secondary" id="btnSave" style="width: 100%; margin-bottom: 12px;">
-        💾 ذخیره در Google Sheet
-      </button>
-      <div id="sheetStatus" style="font-size: 12px; color: var(--text-muted);">
-        ℹ️ وضعیت: آماده برای ذخیره
+      <div class="btn-group" style="width: 100%;">
+        <button class="btn btn-secondary" id="btnSave" style="flex: 1;">
+          💾 ذخیره محلی
+        </button>
+        <button class="btn btn-outline" id="btnDownload" style="flex: 1;">
+          📥 دانلود CSV
+        </button>
+      </div>
+      <div id="sheetStatus" style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+        ℹ️ داده‌ها در مرورگر شما ذخیره می‌شوند
       </div>
     </div>
 
@@ -692,12 +698,11 @@ td {
 </div>
 
 <script>
-const GSHEET_URL = "https://script.google.com/macros/s/AKfycbwBLZCsUiqK7QXl_5Cjg2WuEN2fLj4yVKIZN9VYbmfUrjqkEAbPz7hGB57i3kqjW-AgNg/exec";
-
 let state = {
   marketRate: null,
   lockedUntil: 0,
   history: JSON.parse(localStorage.getItem('calcHistory') || '[]'),
+  savedOrders: JSON.parse(localStorage.getItem('savedOrders') || '[]'),
   costRate: 0
 };
 
@@ -718,54 +723,65 @@ function showToast(message, icon = '✅') {
   $('toastIcon').textContent = icon;
   $('toastMessage').textContent = message;
   $('toast').classList.add('show');
-  setTimeout(() => $('toast').classList.remove('show'), 3000);
+  setTimeout(() => $('toast').classList.remove('show'), 4000);
 }
 
-// Fetch Market Rate - بهبود یافته
+// Fetch Market Rate - روش جدید و کارآمد
 async function fetchMarketRate() {
   $('btnFetch').disabled = true;
   $('fetchIcon').innerHTML = '<div class="spinner"></div>';
   $('fetchText').textContent = 'در حال دریافت...';
+  $('marketSource').textContent = 'در حال اتصال به API...';
   
   let price = null;
   let source = '';
 
-  // روش 1: نوبیتکس (بدون CORS)
+  // روش 1: تلاش با نوبیتکس API v2
   try {
-    const res = await fetch('https://api.nobitex.ir/v2/orderbook/USDTIRT');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    
+    const res = await fetch('https://api.nobitex.ir/v2/orderbook/USDTIRT', {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
     const data = await res.json();
     if (data?.lastTradePrice) {
       price = parseFloat(data.lastTradePrice) / 10;
       source = 'نوبیتکس';
     }
   } catch (e) { 
-    console.log('Nobitex v2 error:', e); 
+    console.log('Nobitex v2 failed:', e.message);
   }
 
-  // روش 2: Fallback
+  // روش 2: فالبک به API v1
   if (!price) {
     try {
       const res = await fetch('https://api.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=rls');
       const data = await res.json();
       if (data?.stats?.['usdt-rls']?.latest) {
         price = parseFloat(data.stats['usdt-rls'].latest) / 10;
-        source = 'نوبیتکس';
+        source = 'نوبیتکس (v1)';
       }
     } catch (e) { 
-      console.log('Nobitex v1 error:', e); 
+      console.log('Nobitex v1 failed:', e.message);
     }
   }
 
-  if (price && price > 0) {
+  // روش 3: استفاده از قیمت پیش‌فرض اگر API کار نکرد
+  if (!price || price <= 0) {
+    const defaultPrice = 75000; // یک قیمت معقول پیش‌فرض
+    $('marketRate').textContent = 'نرخ دستی';
+    $('marketSource').innerHTML = '<span style="color: var(--warning);">⚠️ API در دسترس نیست. لطفاً نرخ را دستی وارد کنید</span>';
+    $('lastUpdate').textContent = '';
+    showToast('لطفاً نرخ تتر را به صورت دستی وارد کنید', '⚠️');
+  } else {
     state.marketRate = price;
     $('marketRate').textContent = fmt(price, 0) + ' تومان';
-    $('marketSource').textContent = 'منبع: ' + source;
+    $('marketSource').innerHTML = `<span style="color: var(--secondary);">✅ منبع: ${source}</span>`;
     $('lastUpdate').textContent = 'آخرین بروزرسانی: ' + new Date().toLocaleTimeString('fa-IR');
-    showToast('نرخ بازار دریافت شد: ' + fmt(price, 0) + ' تومان', '✅');
-  } else {
-    $('marketRate').textContent = 'خطا در دریافت';
-    $('marketSource').textContent = 'لطفاً بعداً تلاش کنید';
-    showToast('خطا در دریافت نرخ بازار', '⚠️');
+    showToast(`نرخ دریافت شد: ${fmt(price, 0)} تومان`, '✅');
   }
 
   $('btnFetch').disabled = false;
@@ -841,6 +857,8 @@ function calculate() {
 
   return {
     timestamp: new Date().toISOString(),
+    date: new Date().toLocaleDateString('fa-IR'),
+    time: new Date().toLocaleTimeString('fa-IR'),
     CNY, 
     rateCNY, 
     USDTtoTMN, 
@@ -964,8 +982,8 @@ function lockRate(minutes) {
   showToast(`نرخ برای ${minutes} دقیقه قفل شد`, '🔒');
 }
 
-// Save to Google Sheet - اصلاح شده
-async function saveToSheet() {
+// Save to Local Storage
+function saveToLocal() {
   const payload = calculate();
   if (!payload) return;
   
@@ -974,43 +992,50 @@ async function saveToSheet() {
   payload.paidAmount = num($('inpPaid').value);
   payload.competitorRate = num($('inpCompetitorRate').value);
   payload.announcedRate = num($('inpFinalAnnouncedRate').value);
+  payload.id = Date.now();
 
-  $('btnSave').disabled = true;
-  $('btnSave').textContent = '⏳ در حال ذخیره...';
-  $('sheetStatus').innerHTML = '<div class="spinner" style="width: 16px; height: 16px;"></div> در حال ارسال...';
-  $('sheetStatus').style.color = 'var(--warning)';
+  state.savedOrders.unshift(payload);
+  if (state.savedOrders.length > 100) state.savedOrders.pop();
+  localStorage.setItem('savedOrders', JSON.stringify(state.savedOrders));
 
-  try {
-    const response = await fetch(GSHEET_URL, {
-      redirect: 'follow',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8',
-      },
-      body: JSON.stringify(payload)
-    });
+  showToast(`✅ سفارش ذخیره شد (${state.savedOrders.length} سفارش)`, '✅');
+  $('sheetStatus').innerHTML = `✅ ذخیره شد - مجموع: ${state.savedOrders.length} سفارش`;
+  $('sheetStatus').style.color = 'var(--secondary)';
+}
 
-    const result = await response.text();
-    console.log('Google Sheet Response:', result);
-    
-    if (result.includes('success') || result.includes('ok') || response.ok) {
-      showToast('✅ سفارش با موفقیت ذخیره شد', '✅');
-      $('sheetStatus').textContent = '✅ ذخیره موفق - داده در Google Sheet ثبت شد';
-      $('sheetStatus').style.color = 'var(--secondary)';
-      
-      setTimeout(() => location.reload(), 2000);
-    } else {
-      throw new Error('Response not OK');
-    }
-    
-  } catch (err) {
-    console.error('Save Error:', err);
-    showToast('⚠️ ممکن است ذخیره شده باشد. لطفاً Google Sheet را بررسی کنید.', '⚠️');
-    $('sheetStatus').textContent = '⚠️ درخواست ارسال شد - لطفاً Google Sheet را بررسی کنید';
-    $('sheetStatus').style.color = 'var(--warning)';
-    $('btnSave').disabled = false;
-    $('btnSave').textContent = '💾 ذخیره در Google Sheet';
+// Download CSV
+function downloadCSV() {
+  if (state.savedOrders.length === 0) {
+    showToast('هیچ سفارشی برای دانلود وجود ندارد', '⚠️');
+    return;
   }
+
+  const headers = ['تاریخ', 'ساعت', 'مقدار یوآن', 'نرخ تتر به یوآن', 'نرخ تمام شده', 'جمع کل', 'کمیسیون', 'وضعیت', 'مبلغ واریزی', 'نرخ رقیب', 'نرخ اعلامی', 'یادداشت'];
+  const csv = [
+    headers.join(','),
+    ...state.savedOrders.map(o => [
+      o.date || '',
+      o.time || '',
+      o.CNY || '',
+      o.rateCNY || '',
+      o.costRate || '',
+      o.total || '',
+      o.comm || '',
+      o.status || '',
+      o.paidAmount || '',
+      o.competitorRate || '',
+      o.announcedRate || '',
+      `"${(o.notes || '').replace(/"/g, '""')}"`
+    ].join(','))
+  ].join('\n');
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `سفارشات_یوآن_${new Date().toLocaleDateString('fa-IR').replace(/\//g, '-')}.csv`;
+  link.click();
+  
+  showToast(`✅ فایل CSV دانلود شد (${state.savedOrders.length} سفارش)`, '✅');
 }
 
 // Copy Results
@@ -1046,7 +1071,8 @@ $('btnReset').addEventListener('click', () => {
   if (confirm('آیا مطمئن هستید؟')) location.reload();
 });
 $('btnLock').addEventListener('click', () => lockRate(10));
-$('btnSave').addEventListener('click', saveToSheet);
+$('btnSave').addEventListener('click', saveToLocal);
+$('btnDownload').addEventListener('click', downloadCSV);
 $('btnCopy').addEventListener('click', copyResults);
 $('btnPrint').addEventListener('click', printResults);
 $('btnClearHistory').addEventListener('click', () => {
@@ -1058,13 +1084,10 @@ $('btnClearHistory').addEventListener('click', () => {
   }
 });
 
-// Auto-update market rate every 2 minutes
-setInterval(fetchMarketRate, 120000);
-
-// Initial fetch
+// Initial load
 window.addEventListener('load', () => {
-  fetchMarketRate();
   console.log('✅ سیستم آماده است - طراحی: علیرضا حامد');
+  console.log(`📊 سفارشات ذخیره شده: ${state.savedOrders.length}`);
 });
 </script>
 </body>
