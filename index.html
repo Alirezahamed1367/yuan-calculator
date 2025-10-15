@@ -569,7 +569,7 @@
 
     <script>
         // ==================== تنظیمات و متغیرها ====================
-        const GSHEET_URL = "https://script.google.com/macros/s/AKfycbyMCDxen_x8r6fZmzLYVsByzZp5Vwom0V1JfU-miQdEjRg8j7cyg95KQMllkOwhQX-P/exec";
+        const GSHEET_URL = "https://script.google.com/macros/s/AKfycbyJ6yq1_-92T0TmvqKVzR5II2QLBAgXq0z9G3L9Mo8oJMQPOr6b3E7bzDhlgztGqtlbPA/exec";
         const NAVASAN_API_KEY = "BqLUmJUl4PedLUBIxll8TH7KitgUT8Ml";
         const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 
@@ -617,7 +617,6 @@
         // ==================== ریست صفحه ====================
         function resetPage() {
             if (confirm('آیا مطمئن هستید که می‌خواهید صفحه را ریست کنید؟')) {
-                // پاک کردن تمام فیلدهای ورودی
                 $('inpCNY').value = '';
                 $('inpRateCNY').value = '';
                 $('inpMarket').value = '';
@@ -628,21 +627,18 @@
                 $('inpNotes').value = '';
                 $('inpStatus').value = 'پیش‌نویس';
 
-                // پاک کردن نتایج
                 $('resUSDT').textContent = '-';
                 $('resBaseCost').textContent = '-';
                 $('resCostRate').textContent = '-';
                 $('resTotal').textContent = '-';
                 $('competitiveResult').innerHTML = '';
 
-                // ریست حالت به دستی
                 setInputMode('manual');
-
                 showToast('✅ صفحه ریست شد', 'success');
             }
         }
 
-        // ==================== حالت ورودی (دستی/خودکار) ====================
+        // ==================== حالت ورودی ====================
         function setInputMode(mode) {
             state.inputMode = mode;
             $('btnManualMode').classList.toggle('active', mode === 'manual');
@@ -651,7 +647,7 @@
             if (mode === 'manual') {
                 $('inpMarket').placeholder = 'نرخ دستی خود را وارد کنید';
                 $('inpMarket').value = '';
-                showToast('ℹ️ حالت دستی: خودتان نرخ را وارد کنید', 'info');
+                showToast('ℹ️ حالت دستی فعال شد', 'info');
             } else {
                 $('inpMarket').placeholder = 'در حال دریافت خودکار...';
                 fetchAllRates();
@@ -668,10 +664,10 @@
                 setTimeout(() => {
                     if (state.onlineRates.nobitex) {
                         $('inpMarket').value = Math.round(state.onlineRates.nobitex);
-                        showToast('✅ نرخ Nobitex در فیلد محاسبه قرار گرفت', 'success');
+                        showToast('✅ نرخ Nobitex وارد شد', 'success');
                     } else if (state.onlineRates.navasan) {
                         $('inpMarket').value = Math.round(state.onlineRates.navasan);
-                        showToast('✅ نرخ Navasan در فیلد محاسبه قرار گرفت', 'success');
+                        showToast('✅ نرخ Navasan وارد شد', 'success');
                     }
                 }, 2000);
             }
@@ -683,9 +679,8 @@
             elem.querySelector('.rate-source-value').textContent = '⏳ در حال دریافت...';
 
             try {
-                // استفاده از CORS Proxy
                 const url = CORS_PROXY + encodeURIComponent('https://api.nobitex.ir/v2/orderbook/USDTIRT');
-                const response = await fetch(url, { timeout: 8000 });
+                const response = await fetch(url);
                 
                 if (response.ok) {
                     const data = await response.json();
@@ -699,7 +694,7 @@
                                 استفاده
                             </button>
                         `;
-                        return rate;
+                        return;
                     }
                 }
                 throw new Error('Invalid response');
@@ -707,7 +702,6 @@
                 elem.className = 'rate-source error';
                 elem.querySelector('.rate-source-value').textContent = '❌ خطا';
                 state.onlineRates.nobitex = null;
-                console.error('Nobitex error:', error);
             }
         }
 
@@ -732,7 +726,7 @@
                                 استفاده
                             </button>
                         `;
-                        return rate;
+                        return;
                     }
                 }
                 throw new Error('Invalid response');
@@ -740,13 +734,12 @@
                 elem.className = 'rate-source error';
                 elem.querySelector('.rate-source-value').textContent = '❌ خطا';
                 state.onlineRates.navasan = null;
-                console.error('Navasan error:', error);
             }
         }
 
         function useRate(rate) {
             $('inpMarket').value = Math.round(rate);
-            showToast(`✅ نرخ ${formatNumber(rate)} تومان در فیلد محاسبه قرار گرفت`, 'success');
+            showToast(`✅ نرخ ${formatNumber(rate)} تومان وارد شد`, 'success');
             calculate();
         }
 
@@ -772,8 +765,11 @@
             $('resCostRate').textContent = formatNumber(costRate) + ' تومان/یوان';
             $('resTotal').textContent = formatNumber(total) + ' تومان';
 
-            showToast('✅ محاسبه با موفقیت انجام شد', 'success');
-            return { CNY, rateCNY, USDTtoTMN, comm, USDT, baseCost, costRate, total, time: new Date().toLocaleString('fa-IR') };
+            showToast('✅ محاسبه انجام شد', 'success');
+            return { 
+                CNY, rateCNY, USDTtoTMN, comm, USDT, baseCost, costRate, total, 
+                time: new Date().toLocaleString('fa-IR')
+            };
         }
 
         // ==================== تحلیل رقابتی ====================
@@ -796,15 +792,15 @@
                 <div class="competitive-result">
                     <h3>📊 گزارش تحلیل رقابتی</h3>
                     <div class="result-item">
-                        <span class="result-label">نرخ تمام‌شده شما:</span>
+                        <span class="result-label">نرخ تمام‌شده:</span>
                         <span class="result-value">${formatNumber(result.costRate)} تومان</span>
                     </div>
                     <div class="result-item">
-                        <span class="result-label">نرخ اعلامی شما:</span>
+                        <span class="result-label">نرخ اعلامی:</span>
                         <span class="result-value">${formatNumber(announcedRate)} تومان</span>
                     </div>
                     <div class="result-item">
-                        <span class="result-label">سود شما:</span>
+                        <span class="result-label">سود:</span>
                         <span class="result-value" style="color: ${profit >= 0 ? '#48bb78' : '#f56565'}">
                             ${formatNumber(profit)} تومان (${formatNumber(profitPercent)}%)
                         </span>
@@ -813,20 +809,19 @@
 
             if (competitorRate) {
                 const diff = announcedRate - competitorRate;
-                const diffPercent = (diff / competitorRate) * 100;
                 html += `
                     <div class="result-item">
                         <span class="result-label">نرخ رقیب:</span>
                         <span class="result-value">${formatNumber(competitorRate)} تومان</span>
                     </div>
                     <div class="result-item">
-                        <span class="result-label">اختلاف با رقیب:</span>
+                        <span class="result-label">اختلاف:</span>
                         <span class="result-value" style="color: ${diff <= 0 ? '#48bb78' : '#f56565'}">
-                            ${diff > 0 ? '+' : ''}${formatNumber(diff)} تومان (${formatNumber(diffPercent)}%)
+                            ${diff > 0 ? '+' : ''}${formatNumber(diff)} تومان
                         </span>
                     </div>
                     <div style="margin-top: 12px; padding: 10px; background: ${diff <= 0 ? '#c6f6d5' : '#fed7d7'}; border-radius: 8px; font-size: 13px; font-weight: 600; color: ${diff <= 0 ? '#22543d' : '#742a2a'};">
-                        ${diff <= 0 ? '✅ نرخ شما رقابتی‌تر است!' : '⚠️ نرخ رقیب بهتر است'}
+                        ${diff <= 0 ? '✅ نرخ شما رقابتی‌تر است' : '⚠️ نرخ رقیب بهتر است'}
                     </div>
                 `;
             }
@@ -843,15 +838,15 @@
 
             const payload = {
                 ...result,
-                status: $('inpStatus').value || 'ثبت دستی',
+                status: $('inpStatus').value,
                 paidAmount: num($('inpPaid').value),
                 competitorRate: num($('inpCompetitorRate').value),
                 announcedRate: num($('inpFinalAnnouncedRate').value),
-                notes: $('inpNotes').value || ''
+                notes: $('inpNotes').value
             };
 
             try {
-                showToast('⏳ در حال ذخیره در Google Sheet...', 'info');
+                showToast('⏳ در حال ذخیره...', 'info');
                 const response = await fetch(GSHEET_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -859,23 +854,22 @@
                     body: JSON.stringify(payload)
                 });
                 
-                showToast('✅ ذخیره شد در Google Sheet', 'success');
-                setTimeout(() => loadFromGoogleSheet(), 1000);
+                showToast('✅ ذخیره شد', 'success');
+                setTimeout(() => loadFromGoogleSheet(), 1500);
             } catch (error) {
-                console.error('Google Sheet error:', error);
-                showToast('❌ خطا در ذخیره‌سازی', 'error');
+                showToast('❌ خطا در ذخیره', 'error');
             }
         }
 
         // ==================== خواندن از Google Sheet ====================
         async function loadFromGoogleSheet() {
             try {
-                showToast('⏳ در حال بارگذاری از Google Sheet...', 'info');
+                showToast('⏳ در حال بارگذاری...', 'info');
                 const response = await fetch(GSHEET_URL + '?action=getLastRecords&count=5');
                 
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.records && data.records.length > 0) {
+                    if (data.success && data.records && data.records.length > 0) {
                         renderSaved(data.records);
                         showToast('✅ لیست بروزرسانی شد', 'success');
                     } else {
@@ -883,17 +877,16 @@
                     }
                 }
             } catch (error) {
-                console.error('Load error:', error);
                 $('savedList').innerHTML = '<p style="color: #fc8181; text-align: center; padding: 20px;">❌ خطا در بارگذاری</p>';
-                showToast('❌ خطا در بارگذاری از Google Sheet', 'error');
+                showToast('❌ خطا در بارگذاری', 'error');
             }
         }
 
         function renderSaved(records) {
             $('savedList').innerHTML = records.map((s, i) => `
                 <div class="saved-item">
-                    <strong>${i + 1}.</strong> ${s.time || 'نامشخص'} | ${s.status || 'ثبت شده'}<br>
-                    ${formatNumber(s.CNY || 0)} یوان → ${formatNumber(s.total || 0)} تومان
+                    <strong>${i + 1}.</strong> ${s.time} | ${s.status}<br>
+                    ${formatNumber(s.CNY)} یوان → ${formatNumber(s.total)} تومان
                     ${s.notes ? `<br><em style="color: #718096;">📝 ${s.notes}</em>` : ''}
                 </div>
             `).join('');
@@ -914,12 +907,12 @@
             link.download = `calculation_${Date.now()}.csv`;
             link.click();
 
-            showToast('✅ فایل CSV دانلود شد', 'success');
+            showToast('✅ فایل دانلود شد', 'success');
         }
 
         // ==================== Initialization ====================
         window.addEventListener('load', () => {
-            console.log('✅ سیستم آماده - طراحی: علیرضا حامد');
+            console.log('✅ سیستم آماده - علیرضا حامد');
             updateLiveTime();
             setInterval(updateLiveTime, 1000);
             
