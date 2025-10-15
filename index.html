@@ -245,9 +245,9 @@
 
         .record-item {
             background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
-            padding: 20px;
+            padding: 15px 20px;
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-right: 5px solid #667eea;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
@@ -262,20 +262,27 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px dashed #e0e0e0;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .record-item p {
-            margin: 8px 0;
-            font-size: 0.95rem;
-            line-height: 1.6;
+        .record-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-top: 10px;
         }
 
-        .record-item strong {
+        .record-item-field {
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .record-item-field strong {
             color: #667eea;
             font-weight: 600;
+            margin-left: 5px;
         }
 
         .record-badge {
@@ -457,7 +464,9 @@
             <div class="card">
                 <h2 class="card-title">📊 نرخ پیشنهادی تتر</h2>
                 <div id="usdtRateDisplay"></div>
-                <button class="btn btn-primary" onclick="updateUSDTRate()">🔄 بروزرسانی</button>
+                <button class="btn btn-primary" onclick="manualUpdate()">
+                    🔄 بروزرسانی <span style="margin-right: 10px; font-weight: 700;" id="updateTimer">05:00</span>
+                </button>
             </div>
 
             <!-- کارت 2: اطلاعات سفارش و نرخ‌ها -->
@@ -536,9 +545,9 @@
                 <div id="competitiveResults"></div>
             </div>
 
-            <!-- کارت 4: اطلاعات خانواده و روش پرداخت -->
+            <!-- کارت 4: اطلاعات مشتری و روش پرداخت -->
             <div class="card">
-                <h2 class="card-title">💳 اطلاعات خانواده و روش پرداخت</h2>
+                <h2 class="card-title">💳 اطلاعات مشتری و روش پرداخت</h2>
                 
                 <div class="input-group">
                     <label for="paymentMethod">🎯 انتخاب روش پرداخت:</label>
@@ -557,7 +566,7 @@
 
                 <div id="receivedAmountSection" style="display: none; margin-top: 20px;">
                     <div class="input-group">
-                        <label for="receivedAmount">💰 مبلغ دریافتی از خانواده:</label>
+                        <label for="receivedAmount">💰 مبلغ دریافتی از مشتری:</label>
                         <input type="number" id="receivedAmount" placeholder="0" step="0.01" inputmode="decimal" oninput="calculate()">
                         <small id="receivedAmountHint" style="display: block; margin-top: 5px; color: #666;"></small>
                     </div>
@@ -614,7 +623,8 @@
         const state = {
             paymentMethod: '',
             tolerance: 0,
-            baseRate: 0
+            baseRate: 0,
+            remainingSeconds: 300
         };
 
         // 🔗 لینک دیپلوی Google Apps Script خود را اینجا قرار دهید
@@ -630,27 +640,67 @@
             setInterval(updateClock, 1000);
             updateUSDTRate();
             loadFromGoogleSheet();
+            startAutoUpdate();
         }
 
         function updateClock() {
             const now = new Date();
-            const persianDate = now.toLocaleDateString('fa-IR', { 
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-            const gregorianDate = now.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-            });
+            
+            // تاریخ فارسی
+            const persianDay = now.toLocaleDateString('fa-IR', { day: 'numeric' });
+            const persianMonth = now.toLocaleDateString('fa-IR', { month: 'long' });
+            const persianYear = now.toLocaleDateString('fa-IR', { year: 'numeric' });
+            const persianDate = `${persianDay} ${persianMonth} ${persianYear}`;
+            
+            // تاریخ میلادی
+            const gregorianDay = now.toLocaleDateString('en-US', { day: 'numeric' });
+            const gregorianMonth = now.toLocaleDateString('en-US', { month: 'short' });
+            const gregorianYear = now.toLocaleDateString('en-US', { year: 'numeric' });
+            const gregorianDate = `${gregorianYear}/${gregorianMonth}/${gregorianDay}`;
+            
+            // روز هفته
+            const weekday = now.toLocaleDateString('fa-IR', { weekday: 'long' });
+            
+            // ساعت
             const time = now.toLocaleTimeString('fa-IR', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
-            document.getElementById('clock').textContent = `📅 ${persianDate} | ${gregorianDate} ⏰ ${time}`;
+            
+            document.getElementById('clock').textContent = `⏰ ${time} | 📅 ${weekday} , ${persianDate} | 📅 ${gregorianDate}`;
+        }
+
+        function startAutoUpdate() {
+            // بروزرسانی هر 5 دقیقه (300 ثانیه)
+            state.remainingSeconds = 300;
+            updateTimerDisplay();
+            
+            // شمارش معکوس هر ثانیه
+            setInterval(() => {
+                state.remainingSeconds--;
+                if (state.remainingSeconds <= 0) {
+                    state.remainingSeconds = 300;
+                    updateUSDTRate();
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.remainingSeconds / 60);
+            const seconds = state.remainingSeconds % 60;
+            const timerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            const timerElement = document.getElementById('updateTimer');
+            if (timerElement) {
+                timerElement.textContent = timerText;
+            }
+        }
+
+        function manualUpdate() {
+            state.remainingSeconds = 300; // ریست تایمر
+            updateUSDTRate();
         }
 
         function setTolerance(amount) {
@@ -712,7 +762,7 @@
                 
                 if (data.success && data.usdtRate > 0) {
                     displayUSDTRate(data.usdtRate);
-                    showToast('نرخ بروزرسانی شد', 'success');
+                    showToast('✅ نرخ بروزرسانی شد', 'success');
                 } else {
                     displayUSDTRate(null, true);
                     showToast('خطا در دریافت نرخ', 'error');
@@ -761,14 +811,14 @@
             }
 
             const descriptions = {
-                'A': 'خانواده ریال به شما ← شما دلار ذخیره به صراف ← صراف تتر به سورس',
-                'B': 'خانواده ریال مستقیم به صراف ← صراف تتر به سورس',
-                'C': 'خانواده دلار مستقیم به صراف ← صراف تتر به سورس',
-                'D': 'خانواده ریال/دلار به شما ← شما تتر شخصی به سورس'
+                'A': 'مشتری ریال به شما ← شما دلار ذخیره به صراف ← صراف تتر به سورس',
+                'B': 'مشتری ریال مستقیم به صراف ← صراف تتر به سورس',
+                'C': 'مشتری دلار مستقیم به صراف ← صراف تتر به سورس',
+                'D': 'مشتری ریال/دلار به شما ← شما تتر شخصی به سورس'
             };
 
             const hints = {
-                'A': 'مبلغ تومانی از خانواده',
+                'A': 'مبلغ تومانی از مشتری',
                 'B': 'مبلغ تومانی به صراف',
                 'C': 'مبلغ دلاری به صراف',
                 'D': 'مبلغ دریافتی (تومان یا دلار)'
@@ -976,14 +1026,20 @@
                 html += `
                     <div class="record-item">
                         <div class="record-header">
-                            <span class="record-badge method-${method}">${method}</span>
-                            <span class="record-badge ${statusClass}">${status}</span>
+                            <div style="display: flex; gap: 8px;">
+                                <span class="record-badge method-${method}">${method}</span>
+                                <span class="record-badge ${statusClass}">${status}</span>
+                            </div>
+                            <span style="font-size: 0.85rem; color: #666;">📅 ${record[1] || '-'}</span>
                         </div>
-                        <p>📅 <strong>تاریخ:</strong> ${record[1] || '-'}</p>
-                        <p>💵 <strong>یوآن:</strong> ${safeValue(record[3]).toLocaleString('fa-IR')} | <strong>ریت:</strong> ${safeValue(record[4])}</p>
-                        <p>📢 <strong>نرخ اعلامی:</strong> ${safeValue(record[12]).toLocaleString('fa-IR')} تومان ${record[11] > 0 ? '(تلرانس: +' + record[11] + ')' : ''}</p>
-                        <p>💰 <strong>دریافتی:</strong> ${safeValue(record[9]).toLocaleString('fa-IR')} تومان</p>
-                        ${record[15] ? `<p>📝 <strong>یادداشت:</strong> ${record[15]}</p>` : ''}
+                        <div class="record-content">
+                            <span class="record-item-field">💵 <strong>یوآن:</strong> ${safeValue(record[3]).toLocaleString('fa-IR')}</span>
+                            <span class="record-item-field">📊 <strong>ریت:</strong> ${safeValue(record[4])}</span>
+                            <span class="record-item-field">📢 <strong>نرخ اعلامی:</strong> ${safeValue(record[12]).toLocaleString('fa-IR')} تومان</span>
+                            ${record[11] > 0 ? `<span class="record-item-field" style="color: #f5576c;">🎚️ <strong>تلرانس:</strong> +${record[11]}</span>` : ''}
+                            <span class="record-item-field">💰 <strong>دریافتی:</strong> ${safeValue(record[9]).toLocaleString('fa-IR')} تومان</span>
+                            ${record[15] ? `<span class="record-item-field">📝 <strong>یادداشت:</strong> ${record[15]}</span>` : ''}
+                        </div>
                     </div>
                 `;
             });
@@ -1023,4 +1079,3 @@
     </script>
 </body>
 </html>
-```
