@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محاسبه‌گر حرفه‌ای فروش یوآن</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #4F46E5;
+  --primary-light: #6366F1;
+  --secondary: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --bg: #F9FAFB;
+  --card-bg: #FFFFFF;
+  --text: #111827;
+  --text-muted: #6B7280;
+  --border: #E5E7EB;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px 10px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 28px;
+  color: var(--primary);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.header .subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.header .developer {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.header .clock {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-icon {
+  font-size: 24px;
+}
+
+.col-12 { grid-column: span 12; }
+.col-6 { grid-column: span 6; }
+.col-4 { grid-column: span 4; }
+.col-3 { grid-column: span 3; }
+
+@media (max-width: 768px) {
+  .col-6, .col-4, .col-3 { grid-column: span 12; }
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: all 0.3s;
+  background: #FAFAFA;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--secondary), #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, var(--warning), #D97706);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--text);
+}
+
+.btn-outline:hover {
+  background: var(--bg);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.market-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.market-value {
+  flex: 1;
+}
+
+.market-value .label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.market-value .value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.market-value .source {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.result-box {
+  background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  border-left: 4px solid var(--primary);
+}
+
+.result-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.result-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.status-success {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-warning {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-danger {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: var(--bg);
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+td {
+  font-size: 14px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: none;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast.show {
+  display: flex;
+}
+
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.history-item {
+  background: var(--bg);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.history-item .time {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .row-2, .row-3 {
+    grid-template-columns: 1fr;
+  }
+  .market-display {
+    flex-direction: column;
+  }
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  body {
+    background: white;
+    padding: 0;
+  }
+  .container {
+    max-width: 100%;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+    page-break-inside: avoid;
+  }
+}
+
+.competitive-box {
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+  border-left: 4px solid var(--warning);
+}
+
+.competitive-box.profit {
+  background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+  border-left-color: var(--secondary);
+}
+
+.competitive-box.loss {
+  background: linear-gradient(135deg, #FEE2E2, #FECACA);
+  border-left-color: var(--danger);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header no-print">
+    <h1>💰 محاسبه‌گر حرفه‌ای فروش یوآن</h1>
+    <p class="subtitle">محاسبه دقیق و لحظه‌ای نرخ تبدیل یوآن به ریال و تتر</p>
+    <div class="clock" id="clockDisplay">
+      <span>🕐</span>
+      <span id="clock">در حال بارگذاری...</span>
+    </div>
+    <div class="developer">
+      👨‍💻 طراحی و توسعه: علیرضا حامد
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Card 1: Market Rate -->
+    <div class="card col-12 no-print">
+      <div class="card-title">
+        <span class="card-icon">📊</span>
+        نرخ لحظه‌ای بازار تتر (فقط برای مقایسه)
+      </div>
+      <div class="market-display">
+        <div class="market-value">
+          <div class="label">قیمت تتر به تومان</div>
+          <div class="value" id="marketRate">—</div>
+          <div class="source" id="marketSource">در انتظار دریافت...</div>
+          <div class="source" id="lastUpdate" style="margin-top: 8px;">آخرین بروزرسانی: —</div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" id="btnFetch">
+            <span id="fetchIcon">🔄</span>
+            دریافت نرخ
+          </button>
+          <button class="btn btn-outline" id="btnReset">
+            ♻️ ریست فرم
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Input Fields -->
+    <div class="card col-12 no-print">
+      <div class="card-title">
+        <span class="card-icon">✍️</span>
+        اطلاعات ورودی
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label class="form-label">مقدار یوآن (CNY)</label>
+          <input type="number" class="form-input" id="inpCNY" value="6000" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ریت تتر به یوآن (CNY / 1 USDT)</label>
+          <input type="number" class="form-input" id="inpRateCNY" value="7.15" inputmode="decimal" step="0.01">
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label class="form-label">ریت تبدیل دلار به تتر</label>
+          <input type="number" class="form-input" id="inpUSDtoUSDT" value="1.014" inputmode="decimal" step="0.001">
+        </div>
+        <div class="form-group">
+          <label class="form-label">نرخ دلار به تومان</label>
+          <input type="number" class="form-input" id="inpUSDtoTMN" value="109800" inputmode="decimal">
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label class="form-label">نرخ تتر به تومان (دستی)</label>
+          <input type="number" class="form-input" id="inpUSDTtoTMN" value="111900" inputmode="decimal" placeholder="وارد کنید">
+        </div>
+        <div class="form-group">
+          <label class="form-label">کمیسیون رابط (تومان / CNY)</label>
+          <input type="number" class="form-input" id="inpComm" value="5" inputmode="decimal">
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label class="form-label">مسیر خرید</label>
+          <select class="form-select" id="inpSource">
+            <option value="sarafi">دلار صرافی</option>
+            <option value="own">دلار خودتان</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">نوع پرداخت</label>
+          <select class="form-select" id="inpCurrency">
+            <option value="TMN">تومان</option>
+            <option value="USD">دلار</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">یادداشت (اختیاری)</label>
+        <textarea class="form-textarea" id="inpNotes" rows="2" placeholder="مثلاً نام دانشجو، ملاحظات..."></textarea>
+      </div>
+    </div>
+
+    <!-- Card 3: Calculation Results -->
+    <div class="card col-12">
+      <div class="card-title no-print">
+        <span class="card-icon">🧮</span>
+        نتایج محاسبات
+      </div>
+      <div class="print-only" style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: var(--primary);">گزارش محاسبات فروش یوآن</h2>
+        <p style="color: var(--text-muted); font-size: 14px;">تاریخ: <span id="printDate"></span></p>
+        <p style="color: var(--text-muted); font-size: 12px; margin-top: 8px;">طراحی و توسعه: علیرضا حامد</p>
+      </div>
+      <button class="btn btn-secondary no-print" id="btnCalc" style="width: 100%; margin-bottom: 16px;">
+        📐 محاسبه نرخ نهایی
+      </button>
+      <div class="result-box">
+        <div class="result-label">نرخ تمام‌شده شما (بهای تمام شده)</div>
+        <div class="result-value" id="finalRate">— تومان / CNY</div>
+        <div id="marketDiff"></div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>شرح</th>
+            <th>مقدار</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>مقدار یوآن</td>
+            <td id="tdCNY">—</td>
+          </tr>
+          <tr>
+            <td>تتر مورد نیاز</td>
+            <td id="tdUSDT">—</td>
+          </tr>
+          <tr>
+            <td>هزینه پایه</td>
+            <td id="tdBase">—</td>
+          </tr>
+          <tr>
+            <td>کمیسیون رابط</td>
+            <td id="tdComm">—</td>
+          </tr>
+          <tr style="background: #F3F4F6; font-weight: 700;">
+            <td>جمع نهایی (بهای تمام شده)</td>
+            <td id="tdTotal">—</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="btn-group no-print" style="margin-top: 16px;">
+        <button class="btn btn-outline" id="btnCopy">
+          📋 کپی نتایج
+        </button>
+        <button class="btn btn-outline" id="btnPrint">
+          🖨️ چاپ نتایج
+        </button>
+      </div>
+    </div>
+
+    <!-- Card 4: Competitive Rate Analysis -->
+    <div class="card col-12">
+      <div class="card-title">
+        <span class="card-icon">📈</span>
+        تحلیل نرخ رقابتی و محاسبه سود/زیان
+      </div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+        ℹ️ ابتدا محاسبات اصلی را انجام دهید تا نرخ تمام‌شده مشخص شود، سپس نرخ رقیب و نرخ اعلامی خود را وارد کنید.
+      </p>
+      <div class="row-3">
+        <div class="form-group">
+          <label class="form-label">نرخ تمام‌شده شما (خودکار)</label>
+          <input type="number" class="form-input" id="inpCostRate" readonly style="background: #F3F4F6;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">نرخ رقیب/رابط در صرافی‌های چین</label>
+          <input type="number" class="form-input" id="inpCompetitorRate" value="0" inputmode="decimal" placeholder="مثلاً: 15700">
+        </div>
+        <div class="form-group">
+          <label class="form-label">نرخ قطعی اعلامی شما به رابط</label>
+          <input type="number" class="form-input" id="inpFinalAnnouncedRate" value="0" inputmode="decimal" placeholder="مثلاً: 15800">
+        </div>
+      </div>
+      <button class="btn btn-warning" id="btnAnalyze" style="width: 100%; margin-bottom: 16px;">
+        📊 تحلیل نرخ رقابتی
+      </button>
+      <div id="competitiveResults"></div>
+    </div>
+
+    <!-- Card 5: Save Order -->
+    <div class="card col-12 no-print">
+      <div class="card-title">
+        <span class="card-icon">💾</span>
+        ثبت سفارش در Google Sheet
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label class="form-label">وضعیت سفارش</label>
+          <input type="text" class="form-input" id="inpStatus" placeholder="مثلاً: پرداخت شده">
+        </div>
+        <div class="form-group">
+          <label class="form-label">مبلغ واریزی (تومان)</label>
+          <input type="number" class="form-input" id="inpPaid" inputmode="decimal" placeholder="مثلاً: 95000000">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">یادداشت نهایی</label>
+        <textarea class="form-textarea" id="inpFinalNote" rows="2"></textarea>
+      </div>
+      <button class="btn btn-secondary" id="btnSave" style="width: 100%;">
+        💾 ذخیره در Google Sheet
+      </button>
+      <div id="sheetStatus" style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+        ℹ️ وضعیت: آماده برای ذخیره
+      </div>
+    </div>
+
+    <!-- Card 6: Lock Rate -->
+    <div class="card col-6 no-print">
+      <div class="card-title">
+        <span class="card-icon">🔒</span>
+        قفل نرخ
+      </div>
+      <button class="btn btn-outline" id="btnLock" style="width: 100%;">
+        🔐 قفل نرخ برای 10 دقیقه
+      </button>
+      <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+        با قفل نرخ، محاسبات تا زمان مشخص قابل تغییر نیست.
+      </p>
+    </div>
+
+    <!-- Card 7: History -->
+    <div class="card col-6 no-print">
+      <div class="card-title">
+        <span class="card-icon">📜</span>
+        تاریخچه محاسبات
+      </div>
+      <div id="historyList" style="max-height: 200px; overflow-y: auto;">
+        <p style="font-size: 13px; color: var(--text-muted);">هنوز محاسبه‌ای انجام نشده است.</p>
+      </div>
+      <button class="btn btn-outline" id="btnClearHistory" style="width: 100%; margin-top: 12px;">
+        🗑️ پاک کردن تاریخچه
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✅</span>
+  <span id="toastMessage">عملیات موفق بود!</span>
+</div>
+
+<script>
+const GSHEET_URL = "https://script.google.com/macros/s/AKfycbwBLZCsUiqK7QXl_5Cjg2WuEN2fLj4yVKIZN9VYbmfUrjqkEAbPz7hGB57i3kqjW-AgNg/exec";
+const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+
+let state = {
+  marketRate: null,
+  lockedUntil: 0,
+  history: JSON.parse(localStorage.getItem('calcHistory') || '[]'),
+  costRate: 0
+};
+
+function $(id) { return document.getElementById(id); }
+function num(v) { return parseFloat(v) || 0; }
+function fmt(v, d = 0) { return isFinite(v) ? v.toLocaleString('fa-IR', { maximumFractionDigits: d }) : '—'; }
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  $('clock').textContent = now.toLocaleDateString('fa-IR') + ' - ' + now.toLocaleTimeString('fa-IR');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Toast
+function showToast(message, icon = '✅') {
+  $('toastIcon').textContent = icon;
+  $('toastMessage').textContent = message;
+  $('toast').classList.add('show');
+  setTimeout(() => $('toast').classList.remove('show'), 3000);
+}
+
+// Fetch Market Rate
+async function fetchMarketRate() {
+  $('btnFetch').disabled = true;
+  const fetchIconEl = $('fetchIcon');
+  fetchIconEl.innerHTML = '<div class="spinner"></div>';
+  
+  let price = null;
+  let source = '';
+
+  // Try Nobitex (direct - no CORS issue)
+  try {
+    const res = await fetch('https://api.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=rls');
+    const data = await res.json();
+    if (data?.stats?.['usdt-rls']?.latest) {
+      price = parseFloat(data.stats['usdt-rls'].latest) / 10;
+      source = 'نوبیتکس';
+    }
+  } catch (e) { 
+    console.log('Nobitex error:', e); 
+  }
+
+  // Try Wallex with CORS proxy
+  if (!price) {
+    try {
+      const res = await fetch(CORS_PROXY + encodeURIComponent('https://api.wallex.ir/v1/markets'));
+      const data = await res.json();
+      if (data?.result?.symbols?.USDTTMN?.stats?.lastPrice) {
+        price = parseFloat(data.result.symbols.USDTTMN.stats.lastPrice);
+        source = 'والکس';
+      }
+    } catch (e) { 
+      console.log('Wallex error:', e); 
+    }
+  }
+
+  if (price) {
+    state.marketRate = price;
+    $('marketRate').textContent = fmt(price, 0) + ' تومان';
+    $('marketSource').textContent = 'منبع: ' + source;
+    $('lastUpdate').textContent = 'آخرین بروزرسانی: ' + new Date().toLocaleTimeString('fa-IR');
+    showToast('نرخ بازار با موفقیت دریافت شد', '✅');
+  } else {
+    $('marketRate').textContent = 'خطا در دریافت';
+    $('marketSource').textContent = 'عدم دسترسی به API';
+    showToast('خطا در دریافت نرخ بازار', '⚠️');
+  }
+
+  $('btnFetch').disabled = false;
+  fetchIconEl.textContent = '🔄';
+}
+
+// Calculate
+function calculate() {
+  const CNY = num($('inpCNY').value);
+  const rateCNY = num($('inpRateCNY').value);
+  const USDTtoTMN = num($('inpUSDTtoTMN').value);
+  const USDtoTMN = num($('inpUSDtoTMN').value);
+  const USDtoUSDT = num($('inpUSDtoUSDT').value) || 1;
+  const comm = num($('inpComm').value);
+  const source = $('inpSource').value;
+
+  if (USDTtoTMN === 0) {
+    showToast('لطفاً نرخ تتر به تومان را وارد کنید', '⚠️');
+    return null;
+  }
+
+  const USDT_req = rateCNY > 0 ? CNY / rateCNY : 0;
+  let baseCost;
+  
+  if (source === 'sarafi') {
+    baseCost = (USDT_req * USDTtoTMN) + (comm * CNY);
+  } else {
+    const pricePerUSDT = USDtoTMN * USDtoUSDT;
+    baseCost = (USDT_req * pricePerUSDT) + (comm * CNY);
+  }
+
+  const commTotal = comm * CNY;
+  const costRatePerCNY = baseCost / CNY;
+
+  state.costRate = costRatePerCNY;
+
+  $('finalRate').textContent = fmt(costRatePerCNY, 0) + ' تومان / CNY';
+  $('tdCNY').textContent = fmt(CNY, 0) + ' CNY';
+  $('tdUSDT').textContent = fmt(USDT_req, 6) + ' USDT';
+  $('tdBase').textContent = fmt(baseCost - commTotal, 0) + ' تومان';
+  $('tdComm').textContent = fmt(commTotal, 0) + ' تومان';
+  $('tdTotal').textContent = fmt(baseCost, 0) + ' تومان';
+  $('inpCostRate').value = Math.round(costRatePerCNY);
+
+  // Market difference
+  if (state.marketRate) {
+    const diff = ((USDTtoTMN - state.marketRate) / state.marketRate) * 100;
+    let badge = '';
+    if (diff > 2) {
+      badge = `<span class="status-badge status-danger">🚨 ${fmt(diff, 2)}% بالاتر از بازار</span>`;
+    } else if (diff < -2) {
+      badge = `<span class="status-badge status-success">✅ ${fmt(Math.abs(diff), 2)}% کمتر از بازار</span>`;
+    } else {
+      badge = `<span class="status-badge status-success">✅ تفاوت: ${fmt(diff, 2)}%</span>`;
+    }
+    $('marketDiff').innerHTML = badge;
+  }
+
+  // Add to history
+  const historyItem = {
+    time: new Date().toLocaleString('fa-IR'),
+    CNY: CNY,
+    rate: Math.round(costRatePerCNY),
+    total: Math.round(baseCost)
+  };
+  state.history.unshift(historyItem);
+  if (state.history.length > 10) state.history.pop();
+  localStorage.setItem('calcHistory', JSON.stringify(state.history));
+  renderHistory();
+
+  showToast('محاسبه با موفقیت انجام شد', '🧮');
+
+  return {
+    CNY, 
+    rateCNY, 
+    USDTtoTMN, 
+    costRate: Math.round(costRatePerCNY),
+    total: Math.round(baseCost), 
+    comm: Math.round(commTotal),
+    notes: $('inpNotes').value || ''
+  };
+}
+
+// Analyze Competitive Rate
+function analyzeCompetitive() {
+  if (state.costRate === 0) {
+    showToast('ابتدا محاسبات اصلی را انجام دهید', '⚠️');
+    return;
+  }
+
+  const costRate = state.costRate;
+  const competitorRate = num($('inpCompetitorRate').value);
+  const announcedRate = num($('inpFinalAnnouncedRate').value);
+  const CNY = num($('inpCNY').value);
+
+  if (competitorRate === 0 || announcedRate === 0) {
+    showToast('لطفاً نرخ رقیب و نرخ اعلامی را وارد کنید', '⚠️');
+    return;
+  }
+
+  // محاسبات
+  const profitVsCost = (announcedRate - costRate) * CNY;
+  const profitVsCompetitor = (announcedRate - competitorRate) * CNY;
+  const profitPercentVsCost = ((announcedRate - costRate) / costRate) * 100;
+  const profitPercentVsCompetitor = ((announcedRate - competitorRate) / competitorRate) * 100;
+  
+  const isCompetitive = announcedRate <= competitorRate;
+  const isProfitable = announcedRate > costRate;
+
+  let html = `
+    <div class="competitive-box ${isProfitable ? 'profit' : 'loss'}">
+      <h4 style="margin-bottom: 12px; color: var(--text);">نتیجه تحلیل نسبت به بهای تمام شده</h4>
+      <table style="margin: 0;">
+        <tr>
+          <td>سود/زیان (تومان)</td>
+          <td style="font-weight: 700; color: ${isProfitable ? 'var(--secondary)' : 'var(--danger)'};">
+            ${isProfitable ? '✅' : '❌'} ${fmt(profitVsCost, 0)} تومان
+          </td>
+        </tr>
+        <tr>
+          <td>درصد سود/زیان</td>
+          <td style="font-weight: 700;">
+            ${fmt(profitPercentVsCost, 2)}%
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="competitive-box ${isCompetitive ? 'profit' : 'loss'}" style="margin-top: 12px;">
+      <h4 style="margin-bottom: 12px; color: var(--text);">نتیجه تحلیل نسبت به نرخ رقیب</h4>
+      <table style="margin: 0;">
+        <tr>
+          <td>اختلاف با رقیب (تومان)</td>
+          <td style="font-weight: 700;">
+            ${fmt(profitVsCompetitor, 0)} تومان
+          </td>
+        </tr>
+        <tr>
+          <td>درصد اختلاف</td>
+          <td style="font-weight: 700;">
+            ${fmt(profitPercentVsCompetitor, 2)}%
+          </td>
+        </tr>
+        <tr>
+          <td>وضعیت رقابتی</td>
+          <td style="font-weight: 700; color: ${isCompetitive ? 'var(--secondary)' : 'var(--danger)'};">
+            ${isCompetitive ? '✅ رقابتی (نرخ شما کمتر یا برابر)' : '⚠️ غیر رقابتی (نرخ شما بالاتر)'}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="background: var(--bg); padding: 16px; border-radius: 12px; margin-top: 12px;">
+      <h4 style="margin-bottom: 12px; color: var(--text);">خلاصه</h4>
+      <ul style="margin: 0; padding-right: 20px; font-size: 14px; line-height: 2;">
+        <li><strong>نرخ تمام شده شما:</strong> ${fmt(costRate, 0)} تومان/CNY</li>
+        <li><strong>نرخ رقیب:</strong> ${fmt(competitorRate, 0)} تومان/CNY</li>
+        <li><strong>نرخ اعلامی شما:</strong> ${fmt(announcedRate, 0)} تومان/CNY</li>
+        <li><strong>نتیجه نهایی:</strong> 
+          ${isProfitable ? '✅ سودآور' : '❌ زیان‌ده'} و 
+          ${isCompetitive ? '✅ رقابتی' : '⚠️ غیر رقابتی'}
+        </li>
+      </ul>
+    </div>
+  `;
+
+  $('competitiveResults').innerHTML = html;
+  showToast('تحلیل رقابتی انجام شد', '📊');
+}
+
+// Render History
+function renderHistory() {
+  const html = state.history.length > 0
+    ? state.history.map(h => `
+        <div class="history-item">
+          <div><strong>${fmt(h.CNY)} یوآن</strong> → ${fmt(h.rate)} تومان/CNY</div>
+          <div class="time">${h.time} - جمع: ${fmt(h.total)} تومان</div>
+        </div>
+      `).join('')
+    : '<p style="font-size: 13px; color: var(--text-muted);">هنوز محاسبه‌ای انجام نشده است.</p>';
+  $('historyList').innerHTML = html;
+}
+renderHistory();
+
+// Lock Rate
+function lockRate(minutes) {
+  state.lockedUntil = Date.now() + (minutes * 60000);
+  $('btnLock').textContent = `🔒 قفل شده برای ${minutes} دقیقه`;
+  $('btnLock').disabled = true;
+  setTimeout(() => {
+    $('btnLock').textContent = '🔐 قفل نرخ برای 10 دقیقه';
+    $('btnLock').disabled = false;
+    showToast('قفل نرخ برداشته شد', '🔓');
+  }, minutes * 60000);
+  showToast(`نرخ برای ${minutes} دقیقه قفل شد`, '🔒');
+}
+
+// Save to Google Sheet
+async function saveToSheet() {
+  const payload = calculate();
+  if (!payload) return;
+  
+  payload.status = $('inpStatus').value || 'ثبت دستی';
+  payload.notes = $('inpFinalNote').value || payload.notes;
+  payload.paidAmount = num($('inpPaid').value);
+  payload.competitorRate = num($('inpCompetitorRate').value);
+  payload.announcedRate = num($('inpFinalAnnouncedRate').value);
+
+  $('btnSave').disabled = true;
+  $('btnSave').textContent = '⏳ در حال ذخیره...';
+  $('sheetStatus').textContent = '⏳ در حال ارسال به Google Sheet...';
+  $('sheetStatus').style.color = 'var(--warning)';
+
+  try {
+    const res = await fetch(GSHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    // در حالت no-cors نمی‌توانیم response را بخوانیم، پس فرض می‌کنیم موفق بوده
+    showToast('سفارش با موفقیت ذخیره شد', '✅');
+    $('sheetStatus').textContent = '✅ ذخیره موفق - اطلاعات در Google Sheet ثبت شد';
+    $('sheetStatus').style.color = 'var(--secondary)';
+    
+    setTimeout(() => {
+      location.reload();
+    }, 2000);
+    
+  } catch (err) {
+    console.error('Error:', err);
+    showToast('خطا در ارتباط با Google Sheet', '❌');
+    $('sheetStatus').textContent = '❌ خطا در ذخیره - لطفاً دوباره تلاش کنید';
+    $('sheetStatus').style.color = 'var(--danger)';
+    $('btnSave').disabled = false;
+    $('btnSave').textContent = '💾 ذخیره در Google Sheet';
+  }
+}
+
+// Copy Results
+function copyResults() {
+  const text = `
+محاسبه‌گر یوآن - علیرضا حامد
+مقدار: ${$('inpCNY').value} CNY
+نرخ تمام شده: ${$('finalRate').textContent}
+جمع کل: ${$('tdTotal').textContent}
+تاریخ: ${new Date().toLocaleString('fa-IR')}
+  `.trim();
+  navigator.clipboard.writeText(text);
+  showToast('نتایج کپی شد', '📋');
+}
+
+// Print
+function printResults() {
+  $('printDate').textContent = new Date().toLocaleString('fa-IR');
+  window.print();
+}
+
+// Event Listeners
+$('btnFetch').addEventListener('click', fetchMarketRate);
+$('btnCalc').addEventListener('click', () => {
+  if (state.lockedUntil && Date.now() < state.lockedUntil) {
+    showToast('نرخ در حال حاضر قفل است', '🔒');
+    return;
+  }
+  calculate();
+});
+$('btnAnalyze').addEventListener('click', analyzeCompetitive);
+$('btnReset').addEventListener('click', () => {
+  if (confirm('آیا مطمئن هستید؟')) location.reload();
+});
+$('btnLock').addEventListener('click', () => lockRate(10));
+$('btnSave').addEventListener('click', saveToSheet);
+$('btnCopy').addEventListener('click', copyResults);
+$('btnPrint').addEventListener('click', printResults);
+$('btnClearHistory').addEventListener('click', () => {
+  if (confirm('آیا مطمئن هستید؟')) {
+    state.history = [];
+    localStorage.removeItem('calcHistory');
+    renderHistory();
+    showToast('تاریخچه پاک شد', '🗑️');
+  }
+});
+
+// Auto-update market rate every 2 minutes
+setInterval(fetchMarketRate, 120000);
+
+// Initial fetch
+window.addEventListener('load', fetchMarketRate);
+</script>
+</body>
+</html>
