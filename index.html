@@ -40,21 +40,15 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .developer-name {
-            background: rgba(255,255,255,0.2);
-            padding: 12px 25px;
-            border-radius: 25px;
-            display: inline-block;
-            margin-bottom: 15px;
-            backdrop-filter: blur(10px);
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
         .clock {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             opacity: 0.95;
             font-weight: 500;
+            background: rgba(255,255,255,0.15);
+            padding: 12px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            backdrop-filter: blur(10px);
         }
 
         .grid {
@@ -130,6 +124,12 @@
         .input-group input[type="number"] {
             font-family: 'Vazirmatn', monospace;
             letter-spacing: 0.5px;
+        }
+
+        .section-divider {
+            border-top: 2px dashed #e0e0e0;
+            margin: 25px 0;
+            padding-top: 20px;
         }
 
         .btn {
@@ -409,12 +409,44 @@
             margin-top: 8px;
         }
 
+        .method-description {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            border-right: 4px solid #667eea;
+        }
+
+        .method-description p {
+            margin: 0;
+            color: #667eea;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer p {
+            margin: 5px 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
         @media (max-width: 768px) {
             .header h1 { font-size: 1.8rem; }
             .grid { grid-template-columns: 1fr; }
             .card { padding: 20px; }
             .tolerance-buttons { grid-template-columns: repeat(2, 1fr); }
             .announced-rate-box .big-value { font-size: 2rem; }
+            .clock { font-size: 0.9rem; padding: 10px 15px; }
         }
     </style>
 </head>
@@ -422,12 +454,11 @@
     <div class="container">
         <div class="header">
             <h1>💰 محاسبه‌گر یوآن به تومان</h1>
-            <div class="developer-name">👨‍💻 طراح و توسعه‌دهنده: علیرضا حامد</div>
             <div class="clock" id="clock"></div>
         </div>
 
         <div class="grid">
-            <!-- کارت نرخ‌های آنلاین -->
+            <!-- کارت 1: نرخ‌های پیشنهادی بازار -->
             <div class="card">
                 <h2 class="card-title">📊 نرخ‌های پیشنهادی بازار</h2>
                 <div id="nobitexRateDisplay"></div>
@@ -435,9 +466,10 @@
                 <button class="btn btn-primary" onclick="updateAllRates()">🔄 بروزرسانی</button>
             </div>
 
-            <!-- کارت انتخاب روش -->
+            <!-- کارت 2: اطلاعات خانواده و روش پرداخت -->
             <div class="card">
-                <h2 class="card-title">💳 روش دریافت وجه</h2>
+                <h2 class="card-title">💳 اطلاعات خانواده و روش پرداخت</h2>
+                
                 <div class="input-group">
                     <label for="paymentMethod">🎯 انتخاب روش پرداخت:</label>
                     <select id="paymentMethod" onchange="handleMethodChange()">
@@ -449,14 +481,22 @@
                     </select>
                 </div>
 
-                <div id="methodDescription" style="margin-top: 15px; padding: 15px; background: #f0f4ff; border-radius: 8px; display: none;">
-                    <p id="methodDescriptionText" style="margin: 0; color: #667eea; font-weight: 500;"></p>
+                <div id="methodDescription" class="method-description" style="display: none;">
+                    <p id="methodDescriptionText"></p>
+                </div>
+
+                <div id="receivedAmountSection" style="display: none; margin-top: 20px;">
+                    <div class="input-group">
+                        <label for="receivedAmount">💰 مبلغ دریافتی از خانواده:</label>
+                        <input type="number" id="receivedAmount" placeholder="0" step="0.01" inputmode="decimal" oninput="calculate()">
+                        <small id="receivedAmountHint" style="display: block; margin-top: 5px; color: #666;"></small>
+                    </div>
                 </div>
             </div>
 
-            <!-- کارت اطلاعات سفارش -->
+            <!-- کارت 3: اطلاعات سفارش و نرخ‌ها -->
             <div class="card">
-                <h2 class="card-title">📝 اطلاعات سفارش</h2>
+                <h2 class="card-title">📝 اطلاعات سفارش و نرخ‌ها</h2>
                 
                 <div class="input-group">
                     <label for="cnyAmount">مقدار یوان درخواستی:</label>
@@ -472,11 +512,8 @@
                     <label for="commission">کمیسیون رابط (تومان):</label>
                     <input type="number" id="commission" placeholder="500" step="1" inputmode="decimal" oninput="calculate()">
                 </div>
-            </div>
 
-            <!-- کارت نرخ‌های دستی -->
-            <div class="card">
-                <h2 class="card-title">⌨️ نرخ‌های دستی (ملاک محاسبات)</h2>
+                <div class="section-divider"></div>
 
                 <div class="input-group">
                     <label for="usdtRateExchange">🏦 نرخ تتر صراف (تومان):</label>
@@ -495,20 +532,9 @@
                 </div>
             </div>
 
-            <!-- مبلغ دریافتی -->
-            <div class="card" id="conditionalFieldsCard" style="display: none;">
-                <h2 class="card-title">💳 مبلغ دریافتی</h2>
-                
-                <div class="input-group">
-                    <label for="receivedAmount">💰 مبلغ از خانواده:</label>
-                    <input type="number" id="receivedAmount" placeholder="0" step="0.01" inputmode="decimal" oninput="calculate()">
-                    <small id="receivedAmountHint" style="display: block; margin-top: 5px; color: #666;"></small>
-                </div>
-            </div>
-
-            <!-- نرخ اعلامی -->
+            <!-- کارت 4: اطلاعات رابط و تحلیل -->
             <div class="card">
-                <h2 class="card-title">📢 نرخ اعلامی به رابط (محاسبه خودکار)</h2>
+                <h2 class="card-title">📢 اطلاعات رابط و تحلیل</h2>
                 
                 <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #333;">🎚️ تلرانس:</label>
                 <div class="tolerance-buttons">
@@ -532,9 +558,19 @@
                         <div class="total-info" id="totalAnnouncedAmount"></div>
                     </div>
                 </div>
+
+                <div class="section-divider"></div>
+
+                <div class="input-group">
+                    <label for="competitorRate">نرخ رقیب (تومان/یوآن):</label>
+                    <input type="number" id="competitorRate" placeholder="11000" step="1" inputmode="decimal">
+                </div>
+
+                <button class="btn btn-warning" onclick="analyzeCompetitive()">🔍 تحلیل رقابتی</button>
+                <div id="competitiveResults"></div>
             </div>
 
-            <!-- نتایج -->
+            <!-- کارت 5: نتایج محاسبات -->
             <div class="card">
                 <h2 class="card-title">📈 نتایج محاسبات</h2>
                 <div id="calculationResults">
@@ -542,20 +578,7 @@
                 </div>
             </div>
 
-            <!-- تحلیل رقابتی -->
-            <div class="card">
-                <h2 class="card-title">🎯 تحلیل رقابتی</h2>
-                
-                <div class="input-group">
-                    <label for="competitorRate">نرخ رقیب (تومان/یوآن):</label>
-                    <input type="number" id="competitorRate" placeholder="11000" step="1" inputmode="decimal">
-                </div>
-
-                <button class="btn btn-warning" onclick="analyzeCompetitive()">🔍 تحلیل</button>
-                <div id="competitiveResults"></div>
-            </div>
-
-            <!-- عملیات -->
+            <!-- کارت 6: عملیات -->
             <div class="card">
                 <h2 class="card-title">⚙️ عملیات</h2>
                 
@@ -577,12 +600,17 @@
                 <button class="btn btn-success" onclick="saveToGoogleSheet()">☁️ ذخیره</button>
                 <button class="btn btn-danger" onclick="resetPage()">🔄 ریست</button>
             </div>
+        </div>
 
-            <!-- رکوردها -->
-            <div class="card" style="grid-column: 1 / -1;">
-                <h2 class="card-title">📋 آخرین رکوردها</h2>
-                <div id="recordsList" class="records-list"></div>
-            </div>
+        <!-- کارت 7: رکوردها (افقی - تمام عرض) -->
+        <div class="card" style="margin-top: 20px;">
+            <h2 class="card-title">📋 آخرین رکوردها</h2>
+            <div id="recordsList" class="records-list"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>👨‍💻 طراح و توسعه‌دهنده: <strong>علیرضا حامد</strong></p>
         </div>
     </div>
 
@@ -611,10 +639,30 @@
 
         function updateClock() {
             const now = new Date();
-            document.getElementById('clock').textContent = now.toLocaleDateString('fa-IR', { 
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            
+            // تاریخ شمسی
+            const persianDate = now.toLocaleDateString('fa-IR', { 
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
             });
+            
+            // تاریخ میلادی
+            const gregorianDate = now.toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+            
+            // ساعت
+            const time = now.toLocaleTimeString('fa-IR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            document.getElementById('clock').textContent = `📅 ${persianDate} | ${gregorianDate} ⏰ ${time}`;
         }
 
         function setTolerance(amount) {
@@ -746,7 +794,7 @@
 
             if (!method) {
                 document.getElementById('methodDescription').style.display = 'none';
-                document.getElementById('conditionalFieldsCard').style.display = 'none';
+                document.getElementById('receivedAmountSection').style.display = 'none';
                 return;
             }
 
@@ -767,7 +815,7 @@
             document.getElementById('methodDescriptionText').textContent = descriptions[method];
             document.getElementById('receivedAmountHint').textContent = hints[method];
             document.getElementById('methodDescription').style.display = 'block';
-            document.getElementById('conditionalFieldsCard').style.display = 'block';
+            document.getElementById('receivedAmountSection').style.display = 'block';
             calculate();
         }
 
@@ -991,7 +1039,7 @@
                 document.querySelectorAll('.tolerance-btn').forEach(btn => btn.classList.remove('active'));
                 document.querySelectorAll('.tolerance-btn')[0].classList.add('active');
                 document.getElementById('methodDescription').style.display = 'none';
-                document.getElementById('conditionalFieldsCard').style.display = 'none';
+                document.getElementById('receivedAmountSection').style.display = 'none';
                 document.getElementById('announcedRateDisplay').style.display = 'none';
                 document.getElementById('calculationResults').innerHTML = '<p style="text-align: center; color: #999; padding: 40px 0;">روش پرداخت را انتخاب کنید</p>';
                 document.getElementById('competitiveResults').innerHTML = '';
