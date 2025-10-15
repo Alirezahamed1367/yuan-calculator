@@ -390,26 +390,38 @@
             padding: 25px;
             border-radius: 12px;
             margin-top: 20px;
+        }
+
+        .announced-rate-box .rate-section {
             text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .announced-rate-box .rate-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
 
         .announced-rate-box h3 {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            opacity: 0.95;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
         }
 
         .announced-rate-box .big-value {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .announced-rate-box .total-info {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-top: 10px;
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-top: 8px;
         }
 
         @media (max-width: 768px) {
@@ -489,36 +501,37 @@
 
             <!-- کارت نرخ‌های دستی -->
             <div class="card">
-                <h2 class="card-title">⌨️ نرخ‌های مورد نیاز</h2>
+                <h2 class="card-title">⌨️ نرخ‌های دستی (ملاک محاسبات)</h2>
                 
                 <div class="mode-toggle">
-                    <button class="active" onclick="toggleMode('auto')">🔄 خودکار</button>
-                    <button onclick="toggleMode('manual')">✍️ دستی</button>
+                    <button class="active" onclick="toggleMode('auto')">🔄 پیشنهاد بازار</button>
+                    <button onclick="toggleMode('manual')">✍️ دستی کامل</button>
                 </div>
 
                 <div class="input-group">
-                    <label for="usdtRate">💎 نرخ تتر بازار:</label>
+                    <label for="usdtRate">💎 نرخ تتر بازار (تومان):</label>
                     <input type="number" id="usdtRate" placeholder="75000" step="1" inputmode="decimal" oninput="calculate()">
                 </div>
 
                 <div class="input-group">
-                    <label for="usdtRateExchange">🏦 نرخ تتر صراف:</label>
+                    <label for="usdtRateExchange">🏦 نرخ تتر صراف (تومان):</label>
                     <input type="number" id="usdtRateExchange" placeholder="75500" step="1" inputmode="decimal" oninput="calculate()">
                 </div>
 
                 <div class="input-group">
-                    <label for="dollarRateMarket">💵 نرخ دلار بازار:</label>
+                    <label for="dollarRateMarket">💵 نرخ دلار بازار (تومان):</label>
                     <input type="number" id="dollarRateMarket" placeholder="74000" step="1" inputmode="decimal" oninput="calculate()">
                 </div>
 
                 <div class="input-group">
-                    <label for="dollarRateExchange">🏦 نرخ دلار صراف:</label>
+                    <label for="dollarRateExchange">🏦 نرخ دلار صراف (تومان):</label>
                     <input type="number" id="dollarRateExchange" placeholder="74200" step="1" inputmode="decimal" oninput="calculate()">
                 </div>
 
                 <div class="input-group">
                     <label for="dollarToUsdt">🔄 نرخ Dollar/USDT:</label>
                     <input type="number" id="dollarToUsdt" placeholder="1.014" step="0.001" inputmode="decimal" value="1.0" oninput="calculate()">
+                    <small style="display: block; margin-top: 5px; color: #666;">به ازای هر 1 تتر چند دلار پرداخت می‌شود</small>
                 </div>
             </div>
 
@@ -535,13 +548,8 @@
 
             <!-- کارت نرخ اعلامی به رابط -->
             <div class="card">
-                <h2 class="card-title">📢 نرخ اعلامی به رابط</h2>
+                <h2 class="card-title">📢 نرخ اعلامی به رابط (محاسبه خودکار)</h2>
                 
-                <div class="input-group">
-                    <label for="baseRateForAgent">💵 نرخ پایه (تومان/یوآن):</label>
-                    <input type="number" id="baseRateForAgent" placeholder="11000" step="1" inputmode="decimal" oninput="updateAnnouncedRate()">
-                </div>
-
                 <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #333;">🎚️ تلرانس (اضافه به نرخ پایه):</label>
                 <div class="tolerance-buttons">
                     <button class="tolerance-btn active" onclick="setTolerance(0)">بدون تلرانس</button>
@@ -553,9 +561,16 @@
                 </div>
 
                 <div class="announced-rate-box" id="announcedRateDisplay" style="display: none;">
-                    <h3>📣 نرخ نهایی اعلامی:</h3>
-                    <div class="big-value" id="finalAnnouncedRate">0</div>
-                    <div class="total-info" id="totalAnnouncedAmount"></div>
+                    <div class="rate-section">
+                        <h3>💵 نرخ پایه محاسبه شده:</h3>
+                        <div class="big-value" id="baseRateCalculated">0</div>
+                        <div class="total-info">بر اساس هزینه واقعی تتر</div>
+                    </div>
+                    <div class="rate-section">
+                        <h3>📣 نرخ نهایی اعلامی به رابط:</h3>
+                        <div class="big-value" id="finalAnnouncedRate">0</div>
+                        <div class="total-info" id="totalAnnouncedAmount"></div>
+                    </div>
                 </div>
             </div>
 
@@ -617,7 +632,8 @@
         const state = {
             mode: 'auto',
             paymentMethod: '',
-            tolerance: 0
+            tolerance: 0,
+            baseRate: 0
         };
 
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJ6yq1_-92T0TmvqKVzR5II2QLBAgXq0z9G3L9Mo8oJMQPOr6b3E7bzDhlgztGqtlbPA/exec';
@@ -656,17 +672,55 @@
             updateAnnouncedRate();
         }
 
-        function updateAnnouncedRate() {
-            const baseRate = safeValue(document.getElementById('baseRateForAgent').value);
+        function calculateBaseRate() {
             const cny = safeValue(document.getElementById('cnyAmount').value);
+            const rateCNY = safeValue(document.getElementById('rateCNY').value);
+            const commission = safeValue(document.getElementById('commission').value);
+            const method = state.paymentMethod;
+
+            if (cny === 0 || rateCNY === 0) {
+                return 0;
+            }
+
+            const usdtNeeded = cny / rateCNY;
+            let usdtCost = 0;
+
+            // استفاده از نرخ‌های دستی (ملاک محاسبات)
+            switch(method) {
+                case 'A':
+                case 'D':
+                    usdtCost = usdtNeeded * safeValue(document.getElementById('usdtRate').value);
+                    break;
+                case 'B':
+                    usdtCost = usdtNeeded * safeValue(document.getElementById('usdtRateExchange').value);
+                    break;
+                case 'C':
+                    const dollarToUsdt = safeValue(document.getElementById('dollarToUsdt').value) || 1.0;
+                    const dollarCost = usdtNeeded * dollarToUsdt;
+                    usdtCost = dollarCost * safeValue(document.getElementById('dollarRateExchange').value);
+                    break;
+                default:
+                    // اگر روش انتخاب نشده، از نرخ تتر صراف استفاده می‌کنیم
+                    usdtCost = usdtNeeded * safeValue(document.getElementById('usdtRateExchange').value);
+            }
+
+            const baseRate = (usdtCost / cny) + commission;
+            return baseRate;
+        }
+
+        function updateAnnouncedRate() {
+            const cny = safeValue(document.getElementById('cnyAmount').value);
+            const baseRate = calculateBaseRate();
             
-            if (baseRate > 0) {
+            if (baseRate > 0 && cny > 0) {
+                state.baseRate = baseRate;
                 const finalRate = baseRate + state.tolerance;
                 const totalAmount = cny * finalRate;
                 
-                document.getElementById('finalAnnouncedRate').textContent = finalRate.toLocaleString('fa-IR') + ' تومان';
+                document.getElementById('baseRateCalculated').textContent = Math.round(baseRate).toLocaleString('fa-IR') + ' تومان';
+                document.getElementById('finalAnnouncedRate').textContent = Math.round(finalRate).toLocaleString('fa-IR') + ' تومان';
                 document.getElementById('totalAnnouncedAmount').textContent = 
-                    cny > 0 ? `مبلغ کل: ${Math.round(totalAmount).toLocaleString('fa-IR')} تومان` : '';
+                    `مبلغ کل برای ${cny.toLocaleString('fa-IR')} یوآن: ${Math.round(totalAmount).toLocaleString('fa-IR')} تومان`;
                 document.getElementById('announcedRateDisplay').style.display = 'block';
             } else {
                 document.getElementById('announcedRateDisplay').style.display = 'none';
@@ -696,7 +750,7 @@
                 <div class="rate-display">
                     <h3>💎 نرخ تتر (Nobitex)</h3>
                     <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
-                    <button class="btn-use" onclick="useNobitexRate(${rate})">استفاده</button>
+                    <button class="btn-use" onclick="useNobitexRate(${rate})">پیشنهاد</button>
                 </div>
             `;
             document.getElementById('nobitexRateDisplay').innerHTML = html;
@@ -713,31 +767,27 @@
                 <div class="rate-display">
                     <h3>💵 نرخ دلار (Navasan)</h3>
                     <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
-                    <button class="btn-use" onclick="useNavasanRate(${rate})">استفاده</button>
+                    <button class="btn-use" onclick="useNavasanRate(${rate})">پیشنهاد</button>
                 </div>
             `;
             document.getElementById('navasanRateDisplay').innerHTML = html;
         }
 
         async function updateAllRates() {
-            showToast('در حال دریافت نرخ‌ها...', 'warning');
+            showToast('در حال دریافت نرخ‌های پیشنهادی...', 'warning');
             try {
                 const rate = await fetchNobitexRate();
                 displayNobitexRate(rate);
                 if (state.mode === 'auto') document.getElementById('usdtRate').value = rate;
-                showToast('✅ نرخ تتر دریافت شد', 'success');
             } catch {
                 displayNobitexRate(null, true);
-                showToast('خطا در دریافت نرخ تتر', 'error');
             }
             try {
                 const rate = await fetchNavasanRate();
                 displayNavasanRate(rate);
                 if (state.mode === 'auto') document.getElementById('dollarRateMarket').value = rate;
-                showToast('✅ نرخ دلار دریافت شد', 'success');
             } catch {
                 displayNavasanRate(null, true);
-                showToast('خطا در دریافت نرخ دلار', 'error');
             }
             calculate();
         }
@@ -745,13 +795,13 @@
         function useNobitexRate(rate) {
             document.getElementById('usdtRate').value = rate;
             calculate();
-            showToast('نرخ تتر بروز شد', 'success');
+            showToast('نرخ تتر تنظیم شد', 'success');
         }
 
         function useNavasanRate(rate) {
             document.getElementById('dollarRateMarket').value = rate;
             calculate();
-            showToast('نرخ دلار بروز شد', 'success');
+            showToast('نرخ دلار تنظیم شد', 'success');
         }
 
         function handleMethodChange() {
@@ -772,10 +822,10 @@
             };
 
             const hints = {
-                'A': 'مبلغ ریالی از خانواده',
-                'B': 'مبلغ ریالی به صراف',
+                'A': 'مبلغ تومانی از خانواده',
+                'B': 'مبلغ تومانی به صراف',
                 'C': 'مبلغ دلاری به صراف',
-                'D': 'مبلغ دریافتی (ریال یا دلار)'
+                'D': 'مبلغ دریافتی (تومان یا دلار)'
             };
 
             document.getElementById('methodDescriptionText').textContent = descriptions[method];
@@ -870,8 +920,8 @@
             html += `<div class="result-card"><h3>💎 تتر مورد نیاز</h3><div class="value">${result.usdtNeeded.toFixed(2)} USDT</div></div>`;
 
             if (method === 'A') {
-                html += `<div class="result-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);"><h3>💵 دلار</h3><div class="value">${result.dollarCost.toFixed(2)} $</div></div>`;
-                html += `<div class="result-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>💰 هزینه ریالی دلار</h3><div class="value">${Math.round(result.rialCostOfDollar).toLocaleString('fa-IR')} تومان</div></div>`;
+                html += `<div class="result-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);"><h3>💵 دلار مورد نیاز</h3><div class="value">${result.dollarCost.toFixed(2)} $</div></div>`;
+                html += `<div class="result-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>💰 هزینه تومانی دلار</h3><div class="value">${Math.round(result.rialCostOfDollar).toLocaleString('fa-IR')} تومان</div></div>`;
             }
 
             if (method === 'B') {
@@ -883,10 +933,10 @@
             }
 
             if (method === 'D') {
-                html += `<div class="result-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>💰 ارزش ریالی تتر</h3><div class="value">${Math.round(result.usdtCostRial).toLocaleString('fa-IR')} تومان</div></div>`;
+                html += `<div class="result-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>💰 ارزش تومانی تتر</h3><div class="value">${Math.round(result.usdtCostRial).toLocaleString('fa-IR')} تومان</div></div>`;
             }
 
-            html += `<div class="result-card" style="background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);"><h3>📊 کمیسیون</h3><div class="value">${Math.round(result.commissionTotal || result.commissionRial || 0).toLocaleString('fa-IR')} تومان</div></div>`;
+            html += `<div class="result-card" style="background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);"><h3>📊 کمیسیون کل</h3><div class="value">${Math.round(result.commissionTotal || result.commissionRial || 0).toLocaleString('fa-IR')} تومان</div></div>`;
 
             const profit = result.profit !== undefined ? result.profit : result.profitRial;
             html += `<div class="result-card" style="background: ${profit >= 0 ? '#28a745' : '#dc3545'};"><h3 style="color: white;">🎯 سود خالص</h3><div class="value" style="color: white;">${Math.round(profit).toLocaleString('fa-IR')} تومان</div></div>`;
@@ -897,8 +947,7 @@
         function analyzeCompetitive() {
             const cny = safeValue(document.getElementById('cnyAmount').value);
             const competitorRate = safeValue(document.getElementById('competitorRate').value);
-            const baseRate = safeValue(document.getElementById('baseRateForAgent').value);
-            const announcedRate = baseRate + state.tolerance;
+            const announcedRate = state.baseRate + state.tolerance;
 
             if (cny === 0 || competitorRate === 0 || announcedRate === 0) {
                 showToast('فیلدها را پر کنید', 'warning');
@@ -940,7 +989,7 @@
                 commission: safeValue(document.getElementById('commission').value),
                 receivedAmount: safeValue(document.getElementById('receivedAmount').value),
                 competitorRate: safeValue(document.getElementById('competitorRate').value),
-                announcedRate: safeValue(document.getElementById('baseRateForAgent').value) + state.tolerance,
+                announcedRate: Math.round(state.baseRate + state.tolerance),
                 status: document.getElementById('status').value,
                 notes: document.getElementById('notes').value
             };
@@ -984,7 +1033,7 @@
                     <div class="record-item">
                         <p><span class="method-indicator ${methodClass}">${record[2] || '-'}</span><strong>تاریخ:</strong> ${record[1] || '-'}</p>
                         <p><strong>یوآن:</strong> ${safeValue(record[3]).toLocaleString('fa-IR')} | <strong>نرخ:</strong> ${safeValue(record[4])}</p>
-                        <p><strong>وضعیت:</strong> ${record[14] || '-'}</p>
+                        <p><strong>نرخ اعلامی:</strong> ${safeValue(record[13]).toLocaleString('fa-IR')} تومان | <strong>وضعیت:</strong> ${record[14] || '-'}</p>
                     </div>
                 `;
             });
@@ -1000,6 +1049,7 @@
                 document.getElementById('dollarToUsdt').value = '1.0';
                 state.paymentMethod = '';
                 state.tolerance = 0;
+                state.baseRate = 0;
                 document.querySelectorAll('.tolerance-btn').forEach(btn => btn.classList.remove('active'));
                 document.querySelectorAll('.tolerance-btn')[0].classList.add('active');
                 document.getElementById('methodDescription').style.display = 'none';
