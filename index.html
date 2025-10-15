@@ -624,7 +624,6 @@
             updateAnnouncedRate();
         }
 
-        // محاسبه نرخ پایه (ثابت - بدون توجه به روش)
         function calculateBaseRate() {
             const cny = safeValue(document.getElementById('cnyAmount').value);
             const rateCNY = safeValue(document.getElementById('rateCNY').value);
@@ -673,36 +672,56 @@
             return Math.round(parseFloat(data.usd_buy.value.replace(/,/g, '')));
         }
 
+        function useRateForUsdt(rate) {
+            document.getElementById('usdtRateExchange').value = rate;
+            calculate();
+            showToast('نرخ تتر تنظیم شد', 'success');
+        }
+
+        function useRateForDollar(rate) {
+            document.getElementById('dollarRateExchange').value = rate;
+            calculate();
+            showToast('نرخ دلار تنظیم شد', 'success');
+        }
+
         function displayNobitexRate(rate, error = false) {
-            const html = error ? `
-                <div class="rate-display error">
-                    <h3>💎 نرخ تتر</h3>
-                    <div class="rate-value">❌ خطا</div>
-                </div>
-            ` : `
-                <div class="rate-display">
-                    <h3>💎 نرخ تتر (Nobitex)</h3>
-                    <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
-                    <button class="btn-use" onclick="document.getElementById('usdtRateExchange').value=${rate};calculate()">استفاده</button>
-                </div>
-            `;
-            document.getElementById('nobitexRateDisplay').innerHTML = html;
+            const container = document.getElementById('nobitexRateDisplay');
+            if (error) {
+                container.innerHTML = `
+                    <div class="rate-display error">
+                        <h3>💎 نرخ تتر</h3>
+                        <div class="rate-value">❌ خطا</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="rate-display">
+                        <h3>💎 نرخ تتر (Nobitex)</h3>
+                        <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
+                        <button class="btn-use" onclick="useRateForUsdt(${rate})">استفاده</button>
+                    </div>
+                `;
+            }
         }
 
         function displayNavasanRate(rate, error = false) {
-            const html = error ? `
-                <div class="rate-display error">
-                    <h3>💵 نرخ دلار</h3>
-                    <div class="rate-value">❌ خطا</div>
-                </div>
-            ` : `
-                <div class="rate-display">
-                    <h3>💵 نرخ دلار (Navasan)</h3>
-                    <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
-                    <button class="btn-use" onclick="document.getElementById('dollarRateExchange').value=${rate};calculate()">استفاده</button>
-                </div>
-            `;
-            document.getElementById('navasanRateDisplay').innerHTML = html;
+            const container = document.getElementById('navasanRateDisplay');
+            if (error) {
+                container.innerHTML = `
+                    <div class="rate-display error">
+                        <h3>💵 نرخ دلار</h3>
+                        <div class="rate-value">❌ خطا</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="rate-display">
+                        <h3>💵 نرخ دلار (Navasan)</h3>
+                        <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
+                        <button class="btn-use" onclick="useRateForDollar(${rate})">استفاده</button>
+                    </div>
+                `;
+            }
         }
 
         async function updateAllRates() {
