@@ -422,9 +422,9 @@
                     <label for="paymentMethod">🎯 انتخاب روش پرداخت:</label>
                     <select id="paymentMethod" onchange="handleMethodChange()">
                         <option value="">-- یک روش را انتخاب کنید --</option>
-                        <option value="A">🔵 روش A: ریال → دلار ذخیره → تتر صراف</option>
-                        <option value="B">🟢 روش B: ریال مستقیم → تتر صراف</option>
-                        <option value="C">🟡 روش C: دلار مستقیم → تتر صراف</option>
+                        <option value="A">🔵 روش A: ریال ← دلار ذخیره ← تتر صراف</option>
+                        <option value="B">🟢 روش B: ریال مستقیم ← تتر صراف</option>
+                        <option value="C">🟡 روش C: دلار مستقیم ← تتر صراف</option>
                         <option value="D">🟣 روش D: کیف پول شخصی (بدون صراف)</option>
                     </select>
                 </div>
@@ -575,6 +575,11 @@
         // Google Apps Script URL
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJ6yq1_-92T0TmvqKVzR5II2QLBAgXq0z9G3L9Mo8oJMQPOr6b3E7bzDhlgztGqtlbPA/exec';
 
+        // Helper function to convert undefined to 0
+        function safeValue(value) {
+            return (value === undefined || value === null || value === '' || isNaN(value)) ? 0 : parseFloat(value);
+        }
+
         // Initialize
         function init() {
             updateClock();
@@ -610,52 +615,33 @@
             }
         }
 
-        // Fetch Nobitex Rate (3-layer fallback)
+        // Fetch Nobitex Rate (Direct only - CORS fixed)
         async function fetchNobitexRate() {
-            const methods = [
-                { name: 'Nobitex API v2', url: 'https://api.nobitex.ir/v2/orderbook/USDTIRT', parser: data => Math.round(parseFloat(data.bids[0][0])) },
-                { name: 'Nobitex API v1', url: 'https://api.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=rls', parser: data => Math.round(parseFloat(data.stats['usdt-rls'].bestSell) / 10) },
-                { name: 'CORS Proxy', url: 'https://corsproxy.io/?https://api.nobitex.ir/v2/orderbook/USDTIRT', parser: data => Math.round(parseFloat(data.bids[0][0])) }
-            ];
-
-            for (const method of methods) {
-                try {
-                    console.log(`Trying ${method.name}...`);
-                    const response = await fetch(method.url);
-                    const data = await response.json();
-                    const rate = method.parser(data);
-                    console.log(`✅ ${method.name} succeeded:`, rate);
-                    return rate;
-                } catch (error) {
-                    console.warn(`❌ ${method.name} failed:`, error.message);
-                }
+            try {
+                const response = await fetch('https://api.nobitex.ir/v2/orderbook/USDTIRT');
+                const data = await response.json();
+                const rate = Math.round(parseFloat(data.bids[0][0]));
+                console.log('✅ Nobitex rate fetched:', rate);
+                return rate;
+            } catch (error) {
+                console.error('❌ Nobitex error:', error);
+                throw new Error('خطا در دریافت نرخ تتر از Nobitex');
             }
-            
-            throw new Error('همه روش‌های دریافت نرخ تتر ناموفق بودند');
         }
 
-        // Fetch Navasan Rate (2-layer fallback)
+        // Fetch Navasan Rate (Direct only - CORS fixed)
         async function fetchNavasanRate() {
             const apiKey = 'BqLUmJUl4PedLUBIxll8TH7KitgUT8Ml';
-            const methods = [
-                { name: 'Navasan API Direct', url: `https://api.navasan.tech/latest/?api_key=${apiKey}` },
-                { name: 'CORS Proxy', url: `https://corsproxy.io/?https://api.navasan.tech/latest/?api_key=${apiKey}` }
-            ];
-
-            for (const method of methods) {
-                try {
-                    console.log(`Trying ${method.name}...`);
-                    const response = await fetch(method.url);
-                    const data = await response.json();
-                    const rate = Math.round(parseFloat(data.usd_buy.value.replace(/,/g, '')));
-                    console.log(`✅ ${method.name} succeeded:`, rate);
-                    return rate;
-                } catch (error) {
-                    console.warn(`❌ ${method.name} failed:`, error.message);
-                }
+            try {
+                const response = await fetch(`https://api.navasan.tech/latest/?api_key=${apiKey}`);
+                const data = await response.json();
+                const rate = Math.round(parseFloat(data.usd_buy.value.replace(/,/g, '')));
+                console.log('✅ Navasan rate fetched:', rate);
+                return rate;
+            } catch (error) {
+                console.error('❌ Navasan error:', error);
+                throw new Error('خطا در دریافت نرخ دلار از Navasan');
             }
-            
-            throw new Error('همه روش‌های دریافت نرخ دلار ناموفق بودند');
         }
 
         // Display Nobitex Rate
@@ -713,10 +699,11 @@
                 if (state.mode === 'auto') {
                     document.getElementById('usdtRate').value = nobitexRate;
                 }
+                showToast('✅ نرخ تتر دریافت شد', 'success');
             } catch (error) {
                 console.error('Nobitex Error:', error);
                 displayNobitexRate(null, true);
-                showToast('خطا در دریافت نرخ تتر', 'error');
+                showToast('خطا در دریافت نرخ تتر - لطفاً دستی وارد کنید', 'error');
             }
 
             try {
@@ -726,10 +713,11 @@
                 if (state.mode === 'auto') {
                     document.getElementById('dollarRateMarket').value = navasanRate;
                 }
+                showToast('✅ نرخ دلار دریافت شد', 'success');
             } catch (error) {
                 console.error('Navasan Error:', error);
                 displayNavasanRate(null, true);
-                showToast('خطا در دریافت نرخ دلار', 'error');
+                showToast('خطا در دریافت نرخ دلار - لطفاً دستی وارد کنید', 'error');
             }
 
             calculate();
@@ -768,10 +756,10 @@
             conditionalCard.style.display = 'block';
 
             const descriptions = {
-                'A': 'خانواده ریال به حساب شما می‌زند → شما از دلار ذخیره خود به صراف می‌دهید → صراف تتر به سورس می‌زند',
-                'B': 'خانواده ریال مستقیم به حساب صراف می‌زند → صراف تتر به سورس می‌زند',
-                'C': 'خانواده دلار مستقیم به صراف می‌دهد → صراف تتر به سورس می‌زند',
-                'D': 'خانواده ریال/دلار به شما می‌دهد → شما از کیف پول شخصی تتر به سورس می‌زنید (بدون صراف)'
+                'A': 'خانواده ریال به حساب شما می‌زند ← شما از دلار ذخیره خود به صراف می‌دهید ← صراف تتر به سورس می‌زند',
+                'B': 'خانواده ریال مستقیم به حساب صراف می‌زند ← صراف تتر به سورس می‌زند',
+                'C': 'خانواده دلار مستقیم به صراف می‌دهد ← صراف تتر به سورس می‌زند',
+                'D': 'خانواده ریال/دلار به شما می‌دهد ← شما از کیف پول شخصی تتر به سورس می‌زنید (بدون صراف)'
             };
 
             const hints = {
@@ -833,7 +821,7 @@
             displayResults(result, method);
         }
 
-        // Method A: ریال → دلار ذخیره → تتر صراف
+        // Method A: ریال ← دلار ذخیره ← تتر صراف
         function calculateMethodA(cny, rateCNY, commission, dollarRateMarket, dollarToUsdt, receivedAmount) {
             const usdtNeeded = cny / rateCNY;
             const dollarCost = usdtNeeded * dollarToUsdt;
@@ -854,7 +842,7 @@
             };
         }
 
-        // Method B: ریال مستقیم → تتر صراف
+        // Method B: ریال مستقیم ← تتر صراف
         function calculateMethodB(cny, rateCNY, commission, usdtRateExchange, receivedAmount) {
             const usdtNeeded = cny / rateCNY;
             const rialCost = usdtNeeded * usdtRateExchange;
@@ -873,7 +861,7 @@
             };
         }
 
-        // Method C: دلار مستقیم → تتر صراف
+        // Method C: دلار مستقیم ← تتر صراف
         function calculateMethodC(cny, rateCNY, commission, dollarRateMarket, dollarToUsdt, receivedAmount) {
             const usdtNeeded = cny / rateCNY;
             const dollarCost = usdtNeeded * dollarToUsdt;
@@ -913,9 +901,9 @@
         function displayResults(result, method) {
             const container = document.getElementById('calculationResults');
             const methodNames = {
-                'A': '🔵 روش A: ریال → دلار ذخیره → تتر',
-                'B': '🟢 روش B: ریال مستقیم → تتر',
-                'C': '🟡 روش C: دلار مستقیم → تتر',
+                'A': '🔵 روش A: ریال ← دلار ذخیره ← تتر',
+                'B': '🟢 روش B: ریال مستقیم ← تتر',
+                'C': '🟡 روش C: دلار مستقیم ← تتر',
                 'D': '🟣 روش D: کیف پول شخصی'
             };
 
@@ -1016,7 +1004,7 @@
             `;
         }
 
-        // Save to Google Sheet
+        // Save to Google Sheet with safe values
         async function saveToGoogleSheet() {
             const method = state.paymentMethod;
             
@@ -1028,20 +1016,20 @@
             const data = {
                 date: new Date().toISOString(),
                 persianTime: new Date().toLocaleString('fa-IR', { timeZone: 'Asia/Tehran' }),
-                paymentMethod: method,
-                cny: document.getElementById('cnyAmount').value,
-                rateCNY: document.getElementById('rateCNY').value,
-                usdtRateMarket: document.getElementById('usdtRate').value,
-                usdtRateExchange: document.getElementById('usdtRateExchange').value,
-                dollarRateMarket: document.getElementById('dollarRateMarket').value,
-                dollarRateExchange: document.getElementById('dollarRateExchange').value,
-                dollarToUsdt: document.getElementById('dollarToUsdt').value,
-                commission: document.getElementById('commission').value,
-                receivedAmount: document.getElementById('receivedAmount').value,
-                competitorRate: document.getElementById('competitorRate').value,
-                announcedRate: document.getElementById('announcedRate').value,
-                status: document.getElementById('status').value,
-                notes: document.getElementById('notes').value
+                paymentMethod: method || '',
+                cny: safeValue(document.getElementById('cnyAmount').value),
+                rateCNY: safeValue(document.getElementById('rateCNY').value),
+                usdtRateMarket: safeValue(document.getElementById('usdtRate').value),
+                usdtRateExchange: safeValue(document.getElementById('usdtRateExchange').value),
+                dollarRateMarket: safeValue(document.getElementById('dollarRateMarket').value),
+                dollarRateExchange: safeValue(document.getElementById('dollarRateExchange').value),
+                dollarToUsdt: safeValue(document.getElementById('dollarToUsdt').value),
+                commission: safeValue(document.getElementById('commission').value),
+                receivedAmount: safeValue(document.getElementById('receivedAmount').value),
+                competitorRate: safeValue(document.getElementById('competitorRate').value),
+                announcedRate: safeValue(document.getElementById('announcedRate').value),
+                status: document.getElementById('status').value || '',
+                notes: document.getElementById('notes').value || ''
             };
 
             try {
@@ -1077,19 +1065,23 @@
             }
         }
 
-        // Display Records
+        // Display Records with safe values
         function displayRecords(records) {
             const container = document.getElementById('recordsList');
             let html = '';
 
             records.forEach((record, index) => {
-                const methodClass = `method-${record[2]}`;
+                const methodClass = `method-${record[2] || 'A'}`;
+                const cny = safeValue(record[3]);
+                const rateCNY = safeValue(record[4]);
+                const receivedAmount = safeValue(record[11]);
+                
                 html += `
                     <div class="record-item">
-                        <p><span class="method-indicator ${methodClass}">${record[2]}</span><strong>تاریخ:</strong> ${record[1]}</p>
-                        <p><strong>یوآن:</strong> ${parseFloat(record[3]).toLocaleString('fa-IR')} | <strong>نرخ CNY:</strong> ${record[4]}</p>
-                        <p><strong>دریافتی:</strong> ${parseFloat(record[11]).toLocaleString('fa-IR')} | <strong>وضعیت:</strong> ${record[17]}</p>
-                        ${record[18] ? `<p><strong>یادداشت:</strong> ${record[18]}</p>` : ''}
+                        <p><span class="method-indicator ${methodClass}">${record[2] || '-'}</span><strong>تاریخ:</strong> ${record[1] || '-'}</p>
+                        <p><strong>یوآن:</strong> ${cny.toLocaleString('fa-IR')} | <strong>نرخ CNY:</strong> ${rateCNY}</p>
+                        <p><strong>دریافتی:</strong> ${receivedAmount.toLocaleString('fa-IR')} | <strong>وضعیت:</strong> ${record[14] || '-'}</p>
+                        ${record[15] ? `<p><strong>یادداشت:</strong> ${record[15]}</p>` : ''}
                     </div>
                 `;
             });
@@ -1104,17 +1096,17 @@
                 new Date().toLocaleDateString('fa-IR'),
                 new Date().toLocaleTimeString('fa-IR'),
                 state.paymentMethod,
-                document.getElementById('cnyAmount').value,
-                document.getElementById('rateCNY').value,
-                document.getElementById('usdtRate').value,
-                document.getElementById('usdtRateExchange').value,
-                document.getElementById('dollarRateMarket').value,
-                document.getElementById('dollarRateExchange').value,
-                document.getElementById('dollarToUsdt').value,
-                document.getElementById('commission').value,
-                document.getElementById('receivedAmount').value,
-                document.getElementById('competitorRate').value,
-                document.getElementById('announcedRate').value,
+                safeValue(document.getElementById('cnyAmount').value),
+                safeValue(document.getElementById('rateCNY').value),
+                safeValue(document.getElementById('usdtRate').value),
+                safeValue(document.getElementById('usdtRateExchange').value),
+                safeValue(document.getElementById('dollarRateMarket').value),
+                safeValue(document.getElementById('dollarRateExchange').value),
+                safeValue(document.getElementById('dollarToUsdt').value),
+                safeValue(document.getElementById('commission').value),
+                safeValue(document.getElementById('receivedAmount').value),
+                safeValue(document.getElementById('competitorRate').value),
+                safeValue(document.getElementById('announcedRate').value),
                 document.getElementById('status').value,
                 document.getElementById('notes').value
             ];
