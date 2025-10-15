@@ -627,8 +627,9 @@
             baseRate: 0
         };
 
-        // لینک دیپلوی جدید Google Apps Script
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKNPrh4biDAMDxUF67DvLF8PxeEtbUkAl1-vw-hS7K/dev';
+        // لینک دیپلوی Google Apps Script
+        // ⚠️ مهم: باید /exec داشته باشد نه /dev
+        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec';
 
         function safeValue(value) {
             const num = parseFloat(value);
@@ -849,6 +850,9 @@
         }
 
         function calculate() {
+            // همیشه نرخ پایه را محاسبه و نمایش بده (مستقل از انتخاب روش پرداخت)
+            updateAnnouncedRate();
+            
             if (!state.paymentMethod) {
                 document.getElementById('calculationResults').innerHTML = 
                     '<p style="text-align: center; color: #999; padding: 40px 0;">روش پرداخت را انتخاب کنید</p>';
@@ -879,7 +883,6 @@
             }
 
             displayResults(result, state.paymentMethod);
-            updateAnnouncedRate();
         }
 
         function calculateMethodA(cny, rateCNY, commission, dollarRateExchange, dollarToUsdt, receivedAmount) {
