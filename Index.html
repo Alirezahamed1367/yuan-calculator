@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>محاسبه‌گر حرفه‌ای فروش یوآن</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -471,7 +472,7 @@ td {
         <div class="btn-group">
           <button class="btn btn-primary" id="btnFetch">
             <span id="fetchIcon">🔄</span>
-            دریافت نرخ
+            <span id="fetchText">دریافت نرخ</span>
           </button>
           <button class="btn btn-outline" id="btnReset">
             ♻️ ریست فرم
@@ -646,10 +647,10 @@ td {
         <label class="form-label">یادداشت نهایی</label>
         <textarea class="form-textarea" id="inpFinalNote" rows="2"></textarea>
       </div>
-      <button class="btn btn-secondary" id="btnSave" style="width: 100%;">
+      <button class="btn btn-secondary" id="btnSave" style="width: 100%; margin-bottom: 12px;">
         💾 ذخیره در Google Sheet
       </button>
-      <div id="sheetStatus" style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+      <div id="sheetStatus" style="font-size: 12px; color: var(--text-muted);">
         ℹ️ وضعیت: آماده برای ذخیره
       </div>
     </div>
@@ -692,7 +693,6 @@ td {
 
 <script>
 const GSHEET_URL = "https://script.google.com/macros/s/AKfycbwBLZCsUiqK7QXl_5Cjg2WuEN2fLj4yVKIZN9VYbmfUrjqkEAbPz7hGB57i3kqjW-AgNg/exec";
-const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 
 let state = {
   marketRate: null,
@@ -721,55 +721,56 @@ function showToast(message, icon = '✅') {
   setTimeout(() => $('toast').classList.remove('show'), 3000);
 }
 
-// Fetch Market Rate
+// Fetch Market Rate - بهبود یافته
 async function fetchMarketRate() {
   $('btnFetch').disabled = true;
-  const fetchIconEl = $('fetchIcon');
-  fetchIconEl.innerHTML = '<div class="spinner"></div>';
+  $('fetchIcon').innerHTML = '<div class="spinner"></div>';
+  $('fetchText').textContent = 'در حال دریافت...';
   
   let price = null;
   let source = '';
 
-  // Try Nobitex (direct - no CORS issue)
+  // روش 1: نوبیتکس (بدون CORS)
   try {
-    const res = await fetch('https://api.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=rls');
+    const res = await fetch('https://api.nobitex.ir/v2/orderbook/USDTIRT');
     const data = await res.json();
-    if (data?.stats?.['usdt-rls']?.latest) {
-      price = parseFloat(data.stats['usdt-rls'].latest) / 10;
+    if (data?.lastTradePrice) {
+      price = parseFloat(data.lastTradePrice) / 10;
       source = 'نوبیتکس';
     }
   } catch (e) { 
-    console.log('Nobitex error:', e); 
+    console.log('Nobitex v2 error:', e); 
   }
 
-  // Try Wallex with CORS proxy
+  // روش 2: Fallback
   if (!price) {
     try {
-      const res = await fetch(CORS_PROXY + encodeURIComponent('https://api.wallex.ir/v1/markets'));
+      const res = await fetch('https://api.nobitex.ir/market/stats?srcCurrency=usdt&dstCurrency=rls');
       const data = await res.json();
-      if (data?.result?.symbols?.USDTTMN?.stats?.lastPrice) {
-        price = parseFloat(data.result.symbols.USDTTMN.stats.lastPrice);
-        source = 'والکس';
+      if (data?.stats?.['usdt-rls']?.latest) {
+        price = parseFloat(data.stats['usdt-rls'].latest) / 10;
+        source = 'نوبیتکس';
       }
     } catch (e) { 
-      console.log('Wallex error:', e); 
+      console.log('Nobitex v1 error:', e); 
     }
   }
 
-  if (price) {
+  if (price && price > 0) {
     state.marketRate = price;
     $('marketRate').textContent = fmt(price, 0) + ' تومان';
     $('marketSource').textContent = 'منبع: ' + source;
     $('lastUpdate').textContent = 'آخرین بروزرسانی: ' + new Date().toLocaleTimeString('fa-IR');
-    showToast('نرخ بازار با موفقیت دریافت شد', '✅');
+    showToast('نرخ بازار دریافت شد: ' + fmt(price, 0) + ' تومان', '✅');
   } else {
     $('marketRate').textContent = 'خطا در دریافت';
-    $('marketSource').textContent = 'عدم دسترسی به API';
+    $('marketSource').textContent = 'لطفاً بعداً تلاش کنید';
     showToast('خطا در دریافت نرخ بازار', '⚠️');
   }
 
   $('btnFetch').disabled = false;
-  fetchIconEl.textContent = '🔄';
+  $('fetchIcon').textContent = '🔄';
+  $('fetchText').textContent = 'دریافت نرخ';
 }
 
 // Calculate
@@ -839,6 +840,7 @@ function calculate() {
   showToast('محاسبه با موفقیت انجام شد', '🧮');
 
   return {
+    timestamp: new Date().toISOString(),
     CNY, 
     rateCNY, 
     USDTtoTMN, 
@@ -866,7 +868,6 @@ function analyzeCompetitive() {
     return;
   }
 
-  // محاسبات
   const profitVsCost = (announcedRate - costRate) * CNY;
   const profitVsCompetitor = (announcedRate - competitorRate) * CNY;
   const profitPercentVsCost = ((announcedRate - costRate) / costRate) * 100;
@@ -963,7 +964,7 @@ function lockRate(minutes) {
   showToast(`نرخ برای ${minutes} دقیقه قفل شد`, '🔒');
 }
 
-// Save to Google Sheet
+// Save to Google Sheet - اصلاح شده
 async function saveToSheet() {
   const payload = calculate();
   if (!payload) return;
@@ -976,33 +977,37 @@ async function saveToSheet() {
 
   $('btnSave').disabled = true;
   $('btnSave').textContent = '⏳ در حال ذخیره...';
-  $('sheetStatus').textContent = '⏳ در حال ارسال به Google Sheet...';
+  $('sheetStatus').innerHTML = '<div class="spinner" style="width: 16px; height: 16px;"></div> در حال ارسال...';
   $('sheetStatus').style.color = 'var(--warning)';
 
   try {
-    const res = await fetch(GSHEET_URL, {
+    const response = await fetch(GSHEET_URL, {
+      redirect: 'follow',
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 
-        'Content-Type': 'application/json'
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8',
       },
       body: JSON.stringify(payload)
     });
+
+    const result = await response.text();
+    console.log('Google Sheet Response:', result);
     
-    // در حالت no-cors نمی‌توانیم response را بخوانیم، پس فرض می‌کنیم موفق بوده
-    showToast('سفارش با موفقیت ذخیره شد', '✅');
-    $('sheetStatus').textContent = '✅ ذخیره موفق - اطلاعات در Google Sheet ثبت شد';
-    $('sheetStatus').style.color = 'var(--secondary)';
-    
-    setTimeout(() => {
-      location.reload();
-    }, 2000);
+    if (result.includes('success') || result.includes('ok') || response.ok) {
+      showToast('✅ سفارش با موفقیت ذخیره شد', '✅');
+      $('sheetStatus').textContent = '✅ ذخیره موفق - داده در Google Sheet ثبت شد';
+      $('sheetStatus').style.color = 'var(--secondary)';
+      
+      setTimeout(() => location.reload(), 2000);
+    } else {
+      throw new Error('Response not OK');
+    }
     
   } catch (err) {
-    console.error('Error:', err);
-    showToast('خطا در ارتباط با Google Sheet', '❌');
-    $('sheetStatus').textContent = '❌ خطا در ذخیره - لطفاً دوباره تلاش کنید';
-    $('sheetStatus').style.color = 'var(--danger)';
+    console.error('Save Error:', err);
+    showToast('⚠️ ممکن است ذخیره شده باشد. لطفاً Google Sheet را بررسی کنید.', '⚠️');
+    $('sheetStatus').textContent = '⚠️ درخواست ارسال شد - لطفاً Google Sheet را بررسی کنید';
+    $('sheetStatus').style.color = 'var(--warning)';
     $('btnSave').disabled = false;
     $('btnSave').textContent = '💾 ذخیره در Google Sheet';
   }
@@ -1057,7 +1062,10 @@ $('btnClearHistory').addEventListener('click', () => {
 setInterval(fetchMarketRate, 120000);
 
 // Initial fetch
-window.addEventListener('load', fetchMarketRate);
+window.addEventListener('load', () => {
+  fetchMarketRate();
+  console.log('✅ سیستم آماده است - طراحی: علیرضا حامد');
+});
 </script>
 </body>
 </html>
