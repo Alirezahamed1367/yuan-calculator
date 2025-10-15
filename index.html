@@ -121,11 +121,6 @@
             padding-left: 40px;
         }
 
-        .input-group input[type="number"] {
-            font-family: 'Vazirmatn', monospace;
-            letter-spacing: 0.5px;
-        }
-
         .section-divider {
             border-top: 2px dashed #e0e0e0;
             margin: 25px 0;
@@ -223,10 +218,6 @@
 
         .rate-display.error {
             background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
-        }
-
-        .rate-display.loading {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
 
         .result-card {
@@ -462,12 +453,11 @@
         </div>
 
         <div class="grid">
-            <!-- کارت 1: نرخ‌های پیشنهادی بازار -->
+            <!-- کارت 1: نرخ پیشنهادی تتر -->
             <div class="card">
-                <h2 class="card-title">📊 نرخ‌های پیشنهادی بازار</h2>
-                <div id="nobitexRateDisplay"></div>
-                <div id="navasanRateDisplay"></div>
-                <button class="btn btn-primary" onclick="updateAllRates()">🔄 بروزرسانی</button>
+                <h2 class="card-title">📊 نرخ پیشنهادی تتر</h2>
+                <div id="usdtRateDisplay"></div>
+                <button class="btn btn-primary" onclick="updateUSDTRate()">🔄 بروزرسانی</button>
             </div>
 
             <!-- کارت 2: اطلاعات سفارش و نرخ‌ها -->
@@ -493,12 +483,12 @@
 
                 <div class="input-group">
                     <label for="usdtRateExchange">🏦 نرخ تتر صراف (تومان):</label>
-                    <input type="number" id="usdtRateExchange" placeholder="75500" step="1" inputmode="decimal" oninput="calculate()">
+                    <input type="number" id="usdtRateExchange" placeholder="110000" step="1" inputmode="decimal" oninput="calculate()">
                 </div>
 
                 <div class="input-group">
                     <label for="dollarRateExchange">🏦 نرخ دلار صراف (تومان):</label>
-                    <input type="number" id="dollarRateExchange" placeholder="74200" step="1" inputmode="decimal" oninput="calculate()">
+                    <input type="number" id="dollarRateExchange" placeholder="0" step="1" inputmode="decimal" oninput="calculate()">
                 </div>
 
                 <div class="input-group">
@@ -627,9 +617,8 @@
             baseRate: 0
         };
 
-        // لینک دیپلوی Google Apps Script
-        // ⚠️ مهم: باید /exec داشته باشد نه /dev
-        const SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID_HERE/exec';
+        // 🔗 لینک دیپلوی Google Apps Script خود را اینجا قرار دهید
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymItu6Zh5j3O3oKoJk331rS5QEJiaaQSuBSpAePz_ByI4l2rrxPPZKVS5x5koc4Xh86Q/exec';
 
         function safeValue(value) {
             const num = parseFloat(value);
@@ -639,35 +628,28 @@
         function init() {
             updateClock();
             setInterval(updateClock, 1000);
-            updateAllRates();
+            updateUSDTRate();
             loadFromGoogleSheet();
         }
 
         function updateClock() {
             const now = new Date();
-            
-            // تاریخ شمسی
             const persianDate = now.toLocaleDateString('fa-IR', { 
                 weekday: 'long',
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
             });
-            
-            // تاریخ میلادی
             const gregorianDate = now.toLocaleDateString('en-GB', {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric'
             });
-            
-            // ساعت
             const time = now.toLocaleTimeString('fa-IR', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
-            
             document.getElementById('clock').textContent = `📅 ${persianDate} | ${gregorianDate} ⏰ ${time}`;
         }
 
@@ -714,72 +696,36 @@
             }
         }
 
-        // دریافت نرخ‌ها از Google Apps Script
-        async function updateAllRates() {
-            showToast('در حال دریافت نرخ‌ها...', 'warning');
+        async function updateUSDTRate() {
+            showToast('در حال دریافت نرخ...', 'warning');
             
-            // نمایش حالت بارگذاری
-            document.getElementById('nobitexRateDisplay').innerHTML = `
-                <div class="rate-display loading">
-                    <h3>💎 نرخ تتر</h3>
-                    <div class="rate-value">⏳ در حال بارگذاری...</div>
-                </div>
-            `;
-            
-            document.getElementById('navasanRateDisplay').innerHTML = `
-                <div class="rate-display loading">
-                    <h3>💵 نرخ دلار</h3>
+            document.getElementById('usdtRateDisplay').innerHTML = `
+                <div class="rate-display">
+                    <h3>💎 نرخ تتر (Wallex)</h3>
                     <div class="rate-value">⏳ در حال بارگذاری...</div>
                 </div>
             `;
 
             try {
-                const response = await fetch(`${SCRIPT_URL}?action=getMarketRates`);
+                const response = await fetch(`${SCRIPT_URL}?action=getUSDTRate`);
                 const data = await response.json();
                 
-                if (data.success) {
-                    // نمایش نرخ تتر
-                    if (data.usdtRate > 0) {
-                        displayNobitexRate(data.usdtRate);
-                    } else {
-                        displayNobitexRate(null, true);
-                    }
-                    
-                    // نمایش نرخ دلار
-                    if (data.dollarRate > 0) {
-                        displayNavasanRate(data.dollarRate);
-                    } else {
-                        displayNavasanRate(null, true);
-                    }
-                    
-                    showToast('نرخ‌ها بروزرسانی شد', 'success');
+                if (data.success && data.usdtRate > 0) {
+                    displayUSDTRate(data.usdtRate);
+                    showToast('نرخ بروزرسانی شد', 'success');
                 } else {
-                    displayNobitexRate(null, true);
-                    displayNavasanRate(null, true);
-                    showToast('خطا در دریافت نرخ‌ها', 'error');
+                    displayUSDTRate(null, true);
+                    showToast('خطا در دریافت نرخ', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                displayNobitexRate(null, true);
-                displayNavasanRate(null, true);
-                showToast('خطا در اتصال به سرور', 'error');
+                displayUSDTRate(null, true);
+                showToast('خطا در اتصال', 'error');
             }
         }
 
-        function useRateForUsdt(rate) {
-            document.getElementById('usdtRateExchange').value = rate;
-            calculate();
-            showToast('نرخ تتر تنظیم شد', 'success');
-        }
-
-        function useRateForDollar(rate) {
-            document.getElementById('dollarRateExchange').value = rate;
-            calculate();
-            showToast('نرخ دلار تنظیم شد', 'success');
-        }
-
-        function displayNobitexRate(rate, error = false) {
-            const container = document.getElementById('nobitexRateDisplay');
+        function displayUSDTRate(rate, error = false) {
+            const container = document.getElementById('usdtRateDisplay');
             if (error) {
                 container.innerHTML = `
                     <div class="rate-display error">
@@ -790,7 +736,7 @@
             } else {
                 container.innerHTML = `
                     <div class="rate-display">
-                        <h3>💎 نرخ تتر (Nobitex)</h3>
+                        <h3>💎 نرخ تتر (Wallex)</h3>
                         <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
                         <button class="btn-use" onclick="useRateForUsdt(${rate})">استفاده</button>
                     </div>
@@ -798,24 +744,10 @@
             }
         }
 
-        function displayNavasanRate(rate, error = false) {
-            const container = document.getElementById('navasanRateDisplay');
-            if (error) {
-                container.innerHTML = `
-                    <div class="rate-display error">
-                        <h3>💵 نرخ دلار</h3>
-                        <div class="rate-value">❌ خطا</div>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <div class="rate-display">
-                        <h3>💵 نرخ دلار (Navasan)</h3>
-                        <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
-                        <button class="btn-use" onclick="useRateForDollar(${rate})">استفاده</button>
-                    </div>
-                `;
-            }
+        function useRateForUsdt(rate) {
+            document.getElementById('usdtRateExchange').value = rate;
+            calculate();
+            showToast('نرخ تتر تنظیم شد', 'success');
         }
 
         function handleMethodChange() {
@@ -850,7 +782,7 @@
         }
 
         function calculate() {
-            // همیشه نرخ پایه را محاسبه و نمایش بده (مستقل از انتخاب روش پرداخت)
+            // همیشه نرخ پایه را محاسبه کن
             updateAnnouncedRate();
             
             if (!state.paymentMethod) {
@@ -1091,3 +1023,4 @@
     </script>
 </body>
 </html>
+```
