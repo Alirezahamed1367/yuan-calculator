@@ -40,20 +40,14 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .clock-container {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .clock-box {
-            font-size: 1rem;
+        .clock {
+            font-size: 1.1rem;
             opacity: 0.95;
             font-weight: 500;
             background: rgba(255,255,255,0.15);
-            padding: 10px 18px;
+            padding: 12px 20px;
             border-radius: 25px;
+            display: inline-block;
             backdrop-filter: blur(10px);
         }
 
@@ -229,6 +223,10 @@
 
         .rate-display.error {
             background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+        }
+
+        .rate-display.loading {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
 
         .result-card {
@@ -452,7 +450,7 @@
             .card { padding: 20px; }
             .tolerance-buttons { grid-template-columns: repeat(2, 1fr); }
             .announced-rate-box .big-value { font-size: 2rem; }
-            .clock-box { font-size: 0.85rem; padding: 8px 14px; }
+            .clock { font-size: 0.9rem; padding: 10px 15px; }
         }
     </style>
 </head>
@@ -460,11 +458,7 @@
     <div class="container">
         <div class="header">
             <h1>💰 محاسبه‌گر یوآن به تومان</h1>
-            <div class="clock-container">
-                <div class="clock-box" id="clock-shamsi">📅 بارگذاری...</div>
-                <div class="clock-box" id="clock-miladi">🌍 بارگذاری...</div>
-                <div class="clock-box" id="clock-time">⏰ بارگذاری...</div>
-            </div>
+            <div class="clock" id="clock"></div>
         </div>
 
         <div class="grid">
@@ -633,8 +627,8 @@
             baseRate: 0
         };
 
-        // 🔥 اینجا URL اسکریپت Google Apps خود را قرار دهید
-        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+        // لینک دیپلوی جدید Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKNPrh4biDAMDxUF67DvLF8PxeEtbUkAl1-vw-hS7K/dev';
 
         function safeValue(value) {
             const num = parseFloat(value);
@@ -651,16 +645,13 @@
         function updateClock() {
             const now = new Date();
             
-            // تاریخ شمسی با ترتیب صحیح
-            const persianParts = now.toLocaleDateString('fa-IR', { 
+            // تاریخ شمسی
+            const persianDate = now.toLocaleDateString('fa-IR', { 
                 weekday: 'long',
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
-            }).split(' ');
-            
-            // ترتیب صحیح: روز هفته، روز، ماه، سال
-            const persianDate = `${persianParts[0]} ${persianParts[1]} ${persianParts[2]} ${persianParts[3]}`;
+            });
             
             // تاریخ میلادی
             const gregorianDate = now.toLocaleDateString('en-GB', {
@@ -676,9 +667,7 @@
                 second: '2-digit'
             });
             
-            document.getElementById('clock-shamsi').textContent = `📅 ${persianDate}`;
-            document.getElementById('clock-miladi').textContent = `🌍 ${gregorianDate}`;
-            document.getElementById('clock-time').textContent = `⏰ ${time}`;
+            document.getElementById('clock').textContent = `📅 ${persianDate} | ${gregorianDate} ⏰ ${time}`;
         }
 
         function setTolerance(amount) {
@@ -724,36 +713,55 @@
             }
         }
 
-        // 🌐 دریافت نرخ‌ها از Google Apps Script
+        // دریافت نرخ‌ها از Google Apps Script
         async function updateAllRates() {
-            showToast('در حال دریافت نرخ‌ها از سرور...', 'warning');
+            showToast('در حال دریافت نرخ‌ها...', 'warning');
             
+            // نمایش حالت بارگذاری
+            document.getElementById('nobitexRateDisplay').innerHTML = `
+                <div class="rate-display loading">
+                    <h3>💎 نرخ تتر</h3>
+                    <div class="rate-value">⏳ در حال بارگذاری...</div>
+                </div>
+            `;
+            
+            document.getElementById('navasanRateDisplay').innerHTML = `
+                <div class="rate-display loading">
+                    <h3>💵 نرخ دلار</h3>
+                    <div class="rate-value">⏳ در حال بارگذاری...</div>
+                </div>
+            `;
+
             try {
                 const response = await fetch(`${SCRIPT_URL}?action=getMarketRates`);
                 const data = await response.json();
                 
                 if (data.success) {
-                    if (data.usdtRate) {
+                    // نمایش نرخ تتر
+                    if (data.usdtRate > 0) {
                         displayNobitexRate(data.usdtRate);
                     } else {
                         displayNobitexRate(null, true);
                     }
                     
-                    if (data.dollarRate) {
+                    // نمایش نرخ دلار
+                    if (data.dollarRate > 0) {
                         displayNavasanRate(data.dollarRate);
                     } else {
                         displayNavasanRate(null, true);
                     }
                     
-                    showToast('✅ نرخ‌ها بروز شد', 'success');
+                    showToast('نرخ‌ها بروزرسانی شد', 'success');
                 } else {
-                    throw new Error('خطا در دریافت نرخ‌ها');
+                    displayNobitexRate(null, true);
+                    displayNavasanRate(null, true);
+                    showToast('خطا در دریافت نرخ‌ها', 'error');
                 }
             } catch (error) {
-                console.error(error);
+                console.error('Error:', error);
                 displayNobitexRate(null, true);
                 displayNavasanRate(null, true);
-                showToast('❌ خطا در دریافت نرخ‌ها', 'error');
+                showToast('خطا در اتصال به سرور', 'error');
             }
         }
 
