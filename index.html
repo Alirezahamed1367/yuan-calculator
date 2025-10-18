@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محاسبه‌گر یوآن به تومان</title>
+    <title>💰 سیستم مدیریت حواله یوآن</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
             font-family: 'Vazirmatn', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             direction: rtl;
         }
 
@@ -30,75 +30,69 @@
         .header {
             text-align: center;
             color: white;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .clock {
-            font-size: 1.1rem;
+            font-size: 1rem;
             opacity: 0.95;
             font-weight: 500;
             background: rgba(255,255,255,0.15);
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: 25px;
             display: inline-block;
             backdrop-filter: blur(10px);
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
         .card {
             background: white;
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
+            margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
         }
 
         .card-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: #667eea;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             padding-bottom: 10px;
             border-bottom: 3px solid #667eea;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: #333;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .input-group input,
         .input-group select {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-family: 'Vazirmatn', sans-serif;
             transition: all 0.3s ease;
             background: #f9f9f9;
@@ -112,32 +106,55 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .input-group select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23667eea' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: left 15px center;
-            padding-left: 40px;
+        .input-group input:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
         }
 
-        .section-divider {
-            border-top: 2px dashed #e0e0e0;
-            margin: 25px 0;
-            padding-top: 20px;
+        .rate-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .rate-display h3 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .rate-display .rate-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .rate-display.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .rate-display.error {
+            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
         }
 
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: none;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             font-family: 'Vazirmatn', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .btn-primary {
@@ -145,7 +162,7 @@
             color: white;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
@@ -155,19 +172,9 @@
             color: white;
         }
 
-        .btn-success:hover {
+        .btn-success:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(56, 239, 125, 0.4);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(238, 9, 121, 0.4);
         }
 
         .btn-warning {
@@ -175,123 +182,264 @@
             color: white;
         }
 
-        .btn-warning:hover {
+        .btn-warning:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
         }
 
-        .rate-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        .rate-display h3 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
-
-        .rate-display .rate-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .rate-display .btn-use {
-            background: white;
-            color: #667eea;
-            padding: 8px 20px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .rate-display .btn-use:hover {
-            transform: scale(1.05);
-            box-shadow: 0 3px 10px rgba(255,255,255,0.3);
-        }
-
-        .rate-display.error {
+        .btn-danger {
             background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+            color: white;
         }
 
-        .result-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        .cost-rate-box {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
             padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            text-align: center;
         }
 
-        .result-card h3 {
+        .cost-rate-box h3 {
             font-size: 1rem;
             margin-bottom: 8px;
             opacity: 0.9;
         }
 
-        .result-card .value {
+        .cost-rate-box .big-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .comparison-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-right: 4px solid #667eea;
+        }
+
+        .comparison-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #dee2e6;
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .comparison-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .comparison-value.positive {
+            color: #28a745;
+        }
+
+        .comparison-value.negative {
+            color: #dc3545;
+        }
+
+        .comparison-value.neutral {
+            color: #667eea;
+        }
+
+        /* Progress Tracker */
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            padding: 0 10px;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .progress-step-circle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+            transform: scale(1.1);
+        }
+
+        .progress-step.completed .progress-step-circle {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .progress-step-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .progress-step.active .progress-step-label {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .progress-step.completed .progress-step-label {
+            color: #11998e;
+            font-weight: 600;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            right: 10%;
+            left: 10%;
+            height: 3px;
+            background: #e9ecef;
+            z-index: 1;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .calculation-result {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
+        .result-value {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #667eea;
+        }
+
+        .result-highlight {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .result-highlight h4 {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .result-highlight .big-value {
             font-size: 1.8rem;
             font-weight: 700;
         }
 
-        .records-list {
-            margin-top: 20px;
-        }
-
         .record-item {
             background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
-            padding: 15px 20px;
+            padding: 15px;
             border-radius: 12px;
             margin-bottom: 12px;
             border-right: 5px solid #667eea;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .record-item:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
         }
 
         .record-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 10px;
             flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .record-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .record-item-field {
-            font-size: 0.9rem;
-            white-space: nowrap;
-        }
-
-        .record-item-field strong {
-            color: #667eea;
-            font-weight: 600;
-            margin-left: 5px;
+            gap: 8px;
         }
 
         .record-badge {
             display: inline-block;
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-left: 8px;
+            margin-left: 5px;
+        }
+
+        .record-badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .record-badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .record-badge.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .record-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            font-size: 0.85rem;
+        }
+
+        .record-field {
+            color: #495057;
+        }
+
+        .record-field strong {
+            color: #667eea;
+            margin-left: 5px;
         }
 
         .toast {
@@ -299,12 +447,13 @@
             bottom: 30px;
             right: 30px;
             background: white;
-            padding: 20px 25px;
+            padding: 15px 20px;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             display: none;
             z-index: 1000;
             animation: slideIn 0.3s ease;
+            min-width: 250px;
         }
 
         @keyframes slideIn {
@@ -330,358 +479,422 @@
             border-right: 5px solid #f5576c;
         }
 
-        .method-A { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .method-B { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; }
-        .method-C { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-        .method-D { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
-
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-confirmed { background: #d4edda; color: #155724; }
-        .status-paid { background: #d1ecf1; color: #0c5460; }
-        .status-cancelled { background: #f8d7da; color: #721c24; }
-
-        .tolerance-buttons {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .tolerance-btn {
-            padding: 12px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            font-family: 'Vazirmatn', sans-serif;
-        }
-
-        .tolerance-btn:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .tolerance-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .announced-rate-box {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 20px;
-        }
-
-        .announced-rate-box .rate-section {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .announced-rate-box .rate-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .announced-rate-box h3 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
-
-        .announced-rate-box .big-value {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .announced-rate-box .total-info {
-            font-size: 1rem;
-            opacity: 0.85;
-            margin-top: 8px;
-        }
-
-        .method-description {
-            margin-top: 15px;
-            padding: 15px;
-            background: #f0f4ff;
-            border-radius: 8px;
-            border-right: 4px solid #667eea;
-        }
-
-        .method-description p {
-            margin: 0;
-            color: #667eea;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-
-        .footer {
-            text-align: center;
-            color: white;
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .footer p {
-            margin: 5px 0;
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-
         @media (max-width: 768px) {
-            .header h1 { font-size: 1.8rem; }
-            .grid { grid-template-columns: 1fr; }
-            .card { padding: 20px; }
-            .tolerance-buttons { grid-template-columns: repeat(2, 1fr); }
-            .announced-rate-box .big-value { font-size: 2rem; }
-            .clock { font-size: 0.9rem; padding: 10px 15px; }
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .clock {
+                font-size: 0.85rem;
+                padding: 8px 12px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .progress-step-circle {
+                width: 35px;
+                height: 35px;
+                font-size: 0.95rem;
+            }
+
+            .progress-step-label {
+                font-size: 0.7rem;
+            }
+
+            .rate-display .rate-value {
+                font-size: 1.3rem;
+            }
+
+            .cost-rate-box .big-value {
+                font-size: 1.6rem;
+            }
+
+            .result-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .toast {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                min-width: auto;
+            }
+        }
+
+        .section-divider {
+            border-top: 2px dashed #e0e0e0;
+            margin: 20px 0;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-right: 4px solid #667eea;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #495057;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 576px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .locked-rate {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        .locked-rate h4 {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            opacity: 0.95;
+        }
+
+        .locked-rate .rate-value {
+            font-size: 2rem;
+            font-weight: 700;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <h1>💰 محاسبه‌گر یوآن به تومان</h1>
+            <h1>💰 سیستم مدیریت حواله یوآن</h1>
             <div class="clock" id="clock"></div>
         </div>
 
-        <div class="grid">
-            <!-- کارت 1: نرخ پیشنهادی تتر -->
-            <div class="card">
-                <h2 class="card-title">📊 نرخ پیشنهادی تتر</h2>
-                <div id="usdtRateDisplay"></div>
-                <button class="btn btn-primary" onclick="manualUpdate()">
-                    🔄 بروزرسانی <span style="margin-right: 10px; font-weight: 700;" id="updateTimer">05:00</span>
-                </button>
-            </div>
-
-            <!-- کارت 2: اطلاعات سفارش و نرخ‌ها -->
-            <div class="card">
-                <h2 class="card-title">📝 اطلاعات سفارش و نرخ‌ها</h2>
-                
-                <div class="input-group">
-                    <label for="cnyAmount">مقدار یوان درخواستی:</label>
-                    <input type="number" id="cnyAmount" placeholder="10000" step="0.01" inputmode="decimal" oninput="calculate()">
-                </div>
-
-                <div class="input-group">
-                    <label for="rateCNY">ریت یوآن به تتر:</label>
-                    <input type="number" id="rateCNY" placeholder="7.25" step="0.0001" inputmode="decimal" oninput="calculate()">
-                </div>
-
-                <div class="input-group">
-                    <label for="commission">کمیسیون رابط (تومان):</label>
-                    <input type="number" id="commission" placeholder="500" step="1" inputmode="decimal" oninput="calculate()">
-                </div>
-
-                <div class="section-divider"></div>
-
-                <div class="input-group">
-                    <label for="usdtRateExchange">🏦 نرخ تتر صراف (تومان):</label>
-                    <input type="number" id="usdtRateExchange" placeholder="110000" step="1" inputmode="decimal" oninput="calculate()">
-                </div>
-
-                <div class="input-group">
-                    <label for="dollarRateExchange">🏦 نرخ دلار صراف (تومان):</label>
-                    <input type="number" id="dollarRateExchange" placeholder="0" step="1" inputmode="decimal" oninput="calculate()">
-                </div>
-
-                <div class="input-group">
-                    <label for="dollarToUsdt">🔄 ریت تبدیل تتر به دلار:</label>
-                    <input type="number" id="dollarToUsdt" placeholder="1.014" step="0.001" inputmode="decimal" value="1.0" oninput="calculate()">
-                    <small style="display: block; margin-top: 5px; color: #666;">به ازای هر 1 تتر چند دلار پرداخت می‌شود</small>
+        <!-- کارت 1: نرخ‌های بازار (هر 5 دقیقه آپدیت) -->
+        <div class="card">
+            <h2 class="card-title">📊 نرخ‌های بازار (بروزرسانی خودکار)</h2>
+            
+            <div id="marketRatesDisplay">
+                <div class="rate-display">
+                    <h3>⏳ در حال بارگذاری...</h3>
+                    <div class="rate-value">لطفاً صبر کنید</div>
                 </div>
             </div>
 
-            <!-- کارت 3: اطلاعات رابط و تحلیل -->
-            <div class="card">
-                <h2 class="card-title">📢 اطلاعات رابط و تحلیل</h2>
-                
-                <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #333;">🎚️ تلرانس:</label>
-                <div class="tolerance-buttons">
-                    <button class="tolerance-btn active" onclick="setTolerance(0)">بدون تلرانس</button>
-                    <button class="tolerance-btn" onclick="setTolerance(50)">+ 50</button>
-                    <button class="tolerance-btn" onclick="setTolerance(100)">+ 100</button>
-                    <button class="tolerance-btn" onclick="setTolerance(150)">+ 150</button>
-                    <button class="tolerance-btn" onclick="setTolerance(200)">+ 200</button>
-                    <button class="tolerance-btn" onclick="setTolerance(300)">+ 300</button>
-                </div>
+            <button class="btn btn-primary" onclick="manualUpdateMarketRates()">
+                🔄 بروزرسانی دستی <span style="margin-right: 10px; font-weight: 700;" id="updateTimer">05:00</span>
+            </button>
+        </div>
 
-                <div class="announced-rate-box" id="announcedRateDisplay" style="display: none;">
-                    <div class="rate-section">
-                        <h3>💵 نرخ پایه:</h3>
-                        <div class="big-value" id="baseRateCalculated">0</div>
-                        <div class="total-info">بر اساس هزینه واقعی</div>
-                    </div>
-                    <div class="rate-section">
-                        <h3>📣 نرخ نهایی اعلامی:</h3>
-                        <div class="big-value" id="finalAnnouncedRate">0</div>
-                        <div class="total-info" id="totalAnnouncedAmount"></div>
-                    </div>
-                </div>
-
-                <div class="section-divider"></div>
-
-                <div class="input-group">
-                    <label for="competitorRate">نرخ رقیب (تومان/یوآن):</label>
-                    <input type="number" id="competitorRate" placeholder="11000" step="1" inputmode="decimal">
-                </div>
-
-                <button class="btn btn-warning" onclick="analyzeCompetitive()">🔍 تحلیل رقابتی</button>
-                <div id="competitiveResults"></div>
+        <!-- کارت 2: نرخ‌های دریافتی (نرخ خرید) -->
+        <div class="card">
+            <h2 class="card-title">💵 نرخ‌های دریافتی (ورودی دستی)</h2>
+            
+            <div class="input-group">
+                <label for="usdtRateExchange">💎 نرخ تتر صرافی (تومان):</label>
+                <input type="text" id="usdtRateExchange" placeholder="75,000" inputmode="decimal" oninput="formatNumber(this); calculateCostRate();">
             </div>
 
-            <!-- کارت 4: اطلاعات مشتری و روش پرداخت -->
-            <div class="card">
-                <h2 class="card-title">💳 اطلاعات مشتری و روش پرداخت</h2>
-                
-                <div class="input-group">
-                    <label for="paymentMethod">🎯 انتخاب روش پرداخت:</label>
-                    <select id="paymentMethod" onchange="handleMethodChange()">
-                        <option value="">-- انتخاب کنید --</option>
-                        <option value="A">🔵 روش A: ریال ← دلار ذخیره ← تتر صراف</option>
-                        <option value="B">🟢 روش B: ریال مستقیم ← تتر صراف</option>
-                        <option value="C">🟡 روش C: دلار مستقیم ← تتر صراف</option>
-                        <option value="D">🟣 روش D: کیف پول شخصی</option>
-                    </select>
-                </div>
-
-                <div id="methodDescription" class="method-description" style="display: none;">
-                    <p id="methodDescriptionText"></p>
-                </div>
-
-                <div id="receivedAmountSection" style="display: none; margin-top: 20px;">
-                    <div class="input-group">
-                        <label for="receivedAmount">💰 مبلغ دریافتی از مشتری:</label>
-                        <input type="number" id="receivedAmount" placeholder="0" step="0.01" inputmode="decimal" oninput="calculate()">
-                        <small id="receivedAmountHint" style="display: block; margin-top: 5px; color: #666;"></small>
-                    </div>
-                </div>
+            <div class="input-group">
+                <label for="dollarRateExchange">💵 نرخ دلار صرافی (تومان):</label>
+                <input type="text" id="dollarRateExchange" placeholder="70,000" inputmode="decimal" oninput="formatNumber(this); calculateCostRate();">
             </div>
 
-            <!-- کارت 5: نتایج محاسبات -->
-            <div class="card">
-                <h2 class="card-title">📈 نتایج محاسبات</h2>
-                <div id="calculationResults">
-                    <p style="text-align: center; color: #999; padding: 40px 0;">روش پرداخت را انتخاب کنید</p>
-                </div>
+            <div class="input-group">
+                <label for="dollarToUsdt">🔄 ریت دلار/تتر صرافی:</label>
+                <input type="number" id="dollarToUsdt" placeholder="1.05" step="0.01" inputmode="decimal" oninput="calculateCostRate();">
             </div>
 
-            <!-- کارت 6: عملیات -->
-            <div class="card">
-                <h2 class="card-title">⚙️ عملیات</h2>
-                
-                <div class="input-group">
-                    <label for="status">وضعیت:</label>
-                    <select id="status">
-                        <option value="در انتظار">⏳ در انتظار</option>
-                        <option value="تایید شده">✅ تایید شده</option>
-                        <option value="پرداخت شده">💸 پرداخت شده</option>
-                        <option value="لغو شده">❌ لغو شده</option>
-                    </select>
-                </div>
+            <div class="input-group">
+                <label for="cnyToUsdtSource">🇨🇳 ریت تتر/یوآن سورس:</label>
+                <input type="number" id="cnyToUsdtSource" placeholder="7.25" step="0.01" inputmode="decimal" oninput="calculateCostRate();">
+            </div>
 
-                <div class="input-group">
-                    <label for="notes">یادداشت:</label>
-                    <input type="text" id="notes" placeholder="توضیحات...">
-                </div>
+            <div class="input-group">
+                <label for="commissionPerCNY">💰 کمیسیون رابط (تومان به ازای هر یوآن):</label>
+                <input type="text" id="commissionPerCNY" placeholder="100" inputmode="decimal" oninput="formatNumber(this); calculateCostRate();">
+            </div>
 
-                <button class="btn btn-success" onclick="saveToGoogleSheet()">☁️ ذخیره</button>
-                <button class="btn btn-danger" onclick="resetPage()">🔄 ریست</button>
+            <!-- نرخ تمام شده خرید -->
+            <div class="cost-rate-box" id="costRateDisplay" style="display: none;">
+                <h3>🏷️ نرخ تمام شده خرید (محاسبه خودکار)</h3>
+                <div class="big-value" id="costRateValue">0</div>
+                <small style="display: block; margin-top: 8px; opacity: 0.9;">تومان به ازای هر یوآن</small>
             </div>
         </div>
 
-        <!-- کارت 7: رکوردها (افقی - تمام عرض) -->
-        <div class="card" style="margin-top: 20px;">
-            <h2 class="card-title">📋 آخرین رکوردها</h2>
-            <div id="recordsList" class="records-list"></div>
+        <!-- کارت 3: تحلیل رقابتی و نرخ فروش -->
+        <div class="card">
+            <h2 class="card-title">📈 تحلیل رقابتی و نرخ فروش</h2>
+
+            <!-- نرخ فروش دستی -->
+            <div class="input-group">
+                <label for="sellingRate">💲 نرخ فروش شما (تومان/یوآن):</label>
+                <input type="text" id="sellingRate" placeholder="11,000" inputmode="decimal" oninput="formatNumber(this); analyzeCompetition();">
+            </div>
+
+            <div class="input-group">
+                <label for="competitorRate">🏪 نرخ رقیب (تومان/یوآن):</label>
+                <input type="text" id="competitorRate" placeholder="10,900" inputmode="decimal" oninput="formatNumber(this); analyzeCompetition();">
+            </div>
+
+            <button class="btn btn-warning" onclick="analyzeCompetition()">🔍 تحلیل مجدد</button>
+
+            <!-- نتیجه تحلیل -->
+            <div id="competitionAnalysis" style="display: none;">
+                <div class="comparison-box">
+                    <div class="comparison-row">
+                        <span class="comparison-label">نرخ تمام شده شما:</span>
+                        <span class="comparison-value neutral" id="yourCostRate">0</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">نرخ فروش شما:</span>
+                        <span class="comparison-value neutral" id="yourSellingRate">0</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">نرخ رقیب:</span>
+                        <span class="comparison-value neutral" id="competitorRateDisplay">0</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">اختلاف با رقیب:</span>
+                        <span class="comparison-value" id="rateDifference">0</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">حاشیه سود شما:</span>
+                        <span class="comparison-value" id="profitMargin">0</span>
+                    </div>
+                </div>
+
+                <div id="competitionResult" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- قفل کردن نرخ فروش -->
+            <div class="section-divider"></div>
+            <button class="btn btn-success" id="lockRateBtn" onclick="lockSellingRate()" disabled>
+                🔒 قفل و تایید نرخ فروش
+            </button>
+
+            <div id="lockedRateDisplay" style="display: none;">
+                <div class="locked-rate">
+                    <h4>✅ نرخ فروش قفل شده</h4>
+                    <div class="rate-value" id="lockedRateValue">0</div>
+                    <small style="display: block; margin-top: 5px; opacity: 0.9;">تومان/یوآن</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- کارت 4: اطلاعات معامله -->
+        <div class="card">
+            <h2 class="card-title">📝 اطلاعات معامله</h2>
+
+            <!-- Progress Tracker -->
+            <div class="progress-tracker">
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-step active" id="step1">
+                    <div class="progress-step-circle">1</div>
+                    <div class="progress-step-label">پیش‌فاکتور</div>
+                </div>
+                <div class="progress-step" id="step2">
+                    <div class="progress-step-circle">2</div>
+                    <div class="progress-step-label">تایید</div>
+                </div>
+                <div class="progress-step" id="step3">
+                    <div class="progress-step-circle">3</div>
+                    <div class="progress-step-label">واریز</div>
+                </div>
+                <div class="progress-step" id="step4">
+                    <div class="progress-step-circle">4</div>
+                    <div class="progress-step-label">حواله</div>
+                </div>
+                <div class="progress-step" id="step5">
+                    <div class="progress-step-circle">5</div>
+                    <div class="progress-step-label">تکمیل</div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- ورودی مبالغ -->
+            <div class="grid-2">
+                <div class="input-group">
+                    <label for="cnyAmount">🇨🇳 مقدار یوآن:</label>
+                    <input type="number" id="cnyAmount" placeholder="10000" inputmode="numeric" oninput="calculateFromCNY();">
+                </div>
+
+                <div class="input-group">
+                    <label for="tomanAmount">💰 مبلغ تومانی:</label>
+                    <input type="text" id="tomanAmount" placeholder="110,000,000" inputmode="decimal" oninput="formatNumber(this); calculateFromToman();">
+                </div>
+            </div>
+
+            <!-- روش تسویه با سورس -->
+            <div class="input-group">
+                <label for="sourceSettlement">🔄 روش تسویه با سورس:</label>
+                <select id="sourceSettlement" onchange="calculateTransaction();">
+                    <option value="">-- انتخاب کنید --</option>
+                    <option value="exchange-usdt">تتر صرافی</option>
+                    <option value="personal-usdt">تتر شخصی</option>
+                </select>
+            </div>
+
+            <!-- نرخ خرید تتر شخصی (فقط برای تتر شخصی) -->
+            <div class="input-group" id="personalUsdtGroup" style="display: none;">
+                <label for="personalUsdtRate">💎 نرخ خرید تتر شخصی (تومان):</label>
+                <input type="text" id="personalUsdtRate" placeholder="74,000" inputmode="decimal" oninput="formatNumber(this); calculateTransaction();">
+            </div>
+
+            <!-- روش تسویه با مشتری -->
+            <div class="input-group">
+                <label for="customerSettlement">💳 روش دریافت از مشتری:</label>
+                <select id="customerSettlement" onchange="calculateTransaction();">
+                    <option value="">-- انتخاب کنید --</option>
+                    <option value="toman-personal">حساب شخصی ← تومان</option>
+                    <option value="toman-exchange">حساب صرافی ← تومان</option>
+                    <option value="dollar-personal">حساب شخصی ← دلار</option>
+                    <option value="dollar-exchange">حساب صرافی ← دلار</option>
+                </select>
+            </div>
+
+            <!-- نام مشتری و توضیحات -->
+            <div class="input-group">
+                <label for="customerName">👤 نام مشتری:</label>
+                <input type="text" id="customerName" placeholder="نام و نام خانوادگی">
+            </div>
+
+            <div class="input-group">
+                <label for="notes">📝 توضیحات:</label>
+                <input type="text" id="notes" placeholder="توضیحات اضافی...">
+            </div>
+
+            <!-- نتایج محاسبات -->
+            <div id="transactionCalculations" style="display: none;">
+                <div class="section-divider"></div>
+                <h3 style="color: #667eea; font-size: 1.1rem; margin-bottom: 15px;">📊 محاسبات معامله</h3>
+                
+                <div class="calculation-result" id="calculationDetails"></div>
+
+                <div class="result-highlight" id="profitDisplay"></div>
+
+                <!-- دکمه قطعی -->
+                <button class="btn btn-success" id="finalizeBtn" onclick="finalizeTransaction()" disabled>
+                    ✅ قطعی کردن و ذخیره در Google Sheets
+                </button>
+            </div>
+        </div>
+
+        <!-- کارت 5: آخرین تراکنش‌ها -->
+        <div class="card">
+            <h2 class="card-title">📋 5 تراکنش آخر</h2>
+            <div id="lastTransactions">
+                <p style="text-align: center; color: #999; padding: 30px 0;">در حال بارگذاری...</p>
+            </div>
         </div>
 
         <!-- Footer -->
-        <div class="footer">
-            <p>👨‍💻 طراح و توسعه‌دهنده: <strong>علیرضا حامد</strong></p>
+        <div style="text-align: center; color: white; margin-top: 30px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 15px; backdrop-filter: blur(10px);">
+            <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">👨‍💻 طراحی و توسعه: <strong>علیرضا حامد</strong></p>
         </div>
     </div>
 
+    <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
     <script>
+        // 🔗 لینک Google Apps Script
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7_pwLCxOuzpfgC2ciWdHsOoQacXtX06htdahbZNJ1WyYOdEL-341uuN8H915Arb-3/exec';
+
+        // State Management
         const state = {
-            paymentMethod: '',
-            tolerance: 0,
-            baseRate: 0,
+            marketRates: {
+                usdt: 0,
+                cny: 0,
+                usdtToCny: 0,
+                lastUpdate: null
+            },
+            costRate: 0,
+            lockedSellingRate: 0,
+            isRateLocked: false,
+            currentStep: 1,
             remainingSeconds: 300
         };
 
-        // 🔗 لینک دیپلوی Google Apps Script خود را اینجا قرار دهید
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymItu6Zh5j3O3oKoJk331rS5QEJiaaQSuBSpAePz_ByI4l2rrxPPZKVS5x5koc4Xh86Q/exec';
-
-        function safeValue(value) {
-            const num = parseFloat(value);
-            return (isNaN(num) || value === '' || value === null || value === undefined) ? 0 : num;
-        }
-
+        // ========================================
+        // 🚀 Initialization
+        // ========================================
         function init() {
             updateClock();
             setInterval(updateClock, 1000);
-            updateUSDTRate();
-            loadFromGoogleSheet();
+            
+            fetchMarketRates();
+            loadLastTransactions();
             startAutoUpdate();
         }
 
+        // ========================================
+        // 🕐 Clock Update
+        // ========================================
         function updateClock() {
             const now = new Date();
             
-            // تاریخ فارسی
-            const persianDay = now.toLocaleDateString('fa-IR', { day: 'numeric' });
-            const persianMonth = now.toLocaleDateString('fa-IR', { month: 'long' });
-            const persianYear = now.toLocaleDateString('fa-IR', { year: 'numeric' });
-            const persianDate = `${persianDay} ${persianMonth} ${persianYear}`;
+            const persianDate = now.toLocaleDateString('fa-IR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
             
-            // تاریخ میلادی
-            const gregorianDay = now.toLocaleDateString('en-US', { day: 'numeric' });
-            const gregorianMonth = now.toLocaleDateString('en-US', { month: 'short' });
-            const gregorianYear = now.toLocaleDateString('en-US', { year: 'numeric' });
-            const gregorianDate = `${gregorianYear}/${gregorianMonth}/${gregorianDay}`;
-            
-            // روز هفته
-            const weekday = now.toLocaleDateString('fa-IR', { weekday: 'long' });
-            
-            // ساعت
             const time = now.toLocaleTimeString('fa-IR', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
             
-            document.getElementById('clock').textContent = `⏰ ${time} | 📅 ${weekday} , ${persianDate} | 📅 ${gregorianDate}`;
+            document.getElementById('clock').textContent = `⏰ ${time} | 📅 ${persianDate}`;
         }
 
+        // ========================================
+        // 🔄 Auto Update Timer
+        // ========================================
         function startAutoUpdate() {
-            // بروزرسانی هر 5 دقیقه (300 ثانیه)
             state.remainingSeconds = 300;
             updateTimerDisplay();
             
-            // شمارش معکوس هر ثانیه
             setInterval(() => {
                 state.remainingSeconds--;
                 if (state.remainingSeconds <= 0) {
                     state.remainingSeconds = 300;
-                    updateUSDTRate();
+                    fetchMarketRates();
                 }
                 updateTimerDisplay();
             }, 1000);
@@ -698,383 +911,624 @@
             }
         }
 
-        function manualUpdate() {
-            state.remainingSeconds = 300; // ریست تایمر
-            updateUSDTRate();
+        function manualUpdateMarketRates() {
+            state.remainingSeconds = 300;
+            fetchMarketRates();
         }
 
-        function setTolerance(amount) {
-            state.tolerance = amount;
-            document.querySelectorAll('.tolerance-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            updateAnnouncedRate();
-        }
-
-        function calculateBaseRate() {
-            const cny = safeValue(document.getElementById('cnyAmount').value);
-            const rateCNY = safeValue(document.getElementById('rateCNY').value);
-            const commission = safeValue(document.getElementById('commission').value);
-            const usdtRateExchange = safeValue(document.getElementById('usdtRateExchange').value);
-
-            if (cny === 0 || rateCNY === 0 || usdtRateExchange === 0) {
-                return 0;
-            }
-
-            const usdtNeeded = cny / rateCNY;
-            const usdtCost = usdtNeeded * usdtRateExchange;
-            const baseRate = (usdtCost / cny) + commission;
+        // ========================================
+        // 📊 Fetch Market Rates
+        // ========================================
+        async function fetchMarketRates() {
+            showToast('در حال دریافت نرخ‌های بازار...', 'warning');
             
-            return baseRate;
-        }
-
-        function updateAnnouncedRate() {
-            const cny = safeValue(document.getElementById('cnyAmount').value);
-            const baseRate = calculateBaseRate();
+            console.log('🔍 Fetching from:', SCRIPT_URL);
             
-            if (baseRate > 0 && cny > 0) {
-                state.baseRate = baseRate;
-                const finalRate = baseRate + state.tolerance;
-                const totalAmount = cny * finalRate;
-                
-                document.getElementById('baseRateCalculated').textContent = Math.round(baseRate).toLocaleString('fa-IR') + ' تومان';
-                document.getElementById('finalAnnouncedRate').textContent = Math.round(finalRate).toLocaleString('fa-IR') + ' تومان';
-                document.getElementById('totalAnnouncedAmount').textContent = 
-                    `مبلغ کل: ${Math.round(totalAmount).toLocaleString('fa-IR')} تومان`;
-                document.getElementById('announcedRateDisplay').style.display = 'block';
-            } else {
-                document.getElementById('announcedRateDisplay').style.display = 'none';
-            }
-        }
-
-        async function updateUSDTRate() {
-            showToast('در حال دریافت نرخ...', 'warning');
-            
-            document.getElementById('usdtRateDisplay').innerHTML = `
-                <div class="rate-display">
-                    <h3>💎 نرخ تتر (Wallex)</h3>
-                    <div class="rate-value">⏳ در حال بارگذاری...</div>
-                </div>
-            `;
-
             try {
-                const response = await fetch(`${SCRIPT_URL}?action=getUSDTRate`);
-                const data = await response.json();
+                // سعی اول: دریافت از Google Script
+                const scriptResponse = await fetch(`${SCRIPT_URL}?action=getMarketRates`);
+                console.log('📡 Script Response Status:', scriptResponse.status);
                 
-                if (data.success && data.usdtRate > 0) {
-                    displayUSDTRate(data.usdtRate);
-                    showToast('✅ نرخ بروزرسانی شد', 'success');
-                } else {
-                    displayUSDTRate(null, true);
-                    showToast('خطا در دریافت نرخ', 'error');
+                const scriptData = await scriptResponse.json();
+                console.log('📊 Script Data:', scriptData);
+                
+                if (scriptData.success) {
+                    state.marketRates.usdt = scriptData.usdtRate || 0;
+                    state.marketRates.usdtToCny = scriptData.usdtToCny || 0;
+                    state.marketRates.lastUpdate = new Date();
+                    
+                    console.log('✅ Market rates updated:', state.marketRates);
+                    
+                    displayMarketRates();
+                    showToast('✅ نرخ‌های بازار بروزرسانی شد (از Google Script)', 'success');
+                    return;
                 }
             } catch (error) {
-                console.error('Error:', error);
-                displayUSDTRate(null, true);
-                showToast('خطا در اتصال', 'error');
+                console.error('❌ Google Script failed:', error);
+                console.log('🔄 Trying direct API...');
+            }
+
+            // سعی دوم: دریافت مستقیم از API‌ها
+            try {
+                console.log('📡 Fetching from Wallex...');
+                
+                // دریافت نرخ تتر از Wallex
+                const wallexResponse = await fetch('https://api.wallex.ir/v1/markets');
+                const wallexData = await wallexResponse.json();
+                
+                if (wallexData.result && wallexData.result.symbols && wallexData.result.symbols['USDTTMN']) {
+                    const usdtMarket = wallexData.result.symbols['USDTTMN'];
+                    state.marketRates.usdt = Math.round(parseFloat(usdtMarket.stats.lastPrice));
+                    console.log('💎 USDT Rate:', state.marketRates.usdt);
+                }
+
+                // دریافت نرخ یوآن
+                try {
+                    console.log('📡 Fetching CNY rate...');
+                    const cnyResponse = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                    const cnyData = await cnyResponse.json();
+                    if (cnyData.rates && cnyData.rates.CNY) {
+                        state.marketRates.usdtToCny = parseFloat(cnyData.rates.CNY.toFixed(2));
+                        console.log('💴 CNY Rate:', state.marketRates.usdtToCny);
+                    }
+                } catch (e) {
+                    console.warn('⚠️ CNY rate fetch failed, using default:', e);
+                    state.marketRates.usdtToCny = 7.25;
+                }
+
+                state.marketRates.lastUpdate = new Date();
+                console.log('✅ Final market rates:', state.marketRates);
+                
+                displayMarketRates();
+                showToast('✅ نرخ‌های بازار بروزرسانی شد (از API مستقیم)', 'success');
+                
+            } catch (error) {
+                console.error('❌ Error fetching market rates:', error);
+                displayMarketRates(true);
+                showToast('❌ خطا در دریافت نرخ‌ها', 'error');
             }
         }
 
-        function displayUSDTRate(rate, error = false) {
-            const container = document.getElementById('usdtRateDisplay');
+        function displayMarketRates(error = false) {
+            const container = document.getElementById('marketRatesDisplay');
+            
             if (error) {
                 container.innerHTML = `
                     <div class="rate-display error">
-                        <h3>💎 نرخ تتر</h3>
-                        <div class="rate-value">❌ خطا</div>
+                        <h3>❌ خطا در دریافت نرخ‌ها</h3>
+                        <div class="rate-value">لطفاً مجدد تلاش کنید</div>
                     </div>
                 `;
-            } else {
-                container.innerHTML = `
-                    <div class="rate-display">
-                        <h3>💎 نرخ تتر (Wallex)</h3>
-                        <div class="rate-value">${rate.toLocaleString('fa-IR')} تومان</div>
-                        <button class="btn-use" onclick="useRateForUsdt(${rate})">استفاده</button>
-                    </div>
-                `;
-            }
-        }
-
-        function useRateForUsdt(rate) {
-            document.getElementById('usdtRateExchange').value = rate;
-            calculate();
-            showToast('نرخ تتر تنظیم شد', 'success');
-        }
-
-        function handleMethodChange() {
-            const method = document.getElementById('paymentMethod').value;
-            state.paymentMethod = method;
-
-            if (!method) {
-                document.getElementById('methodDescription').style.display = 'none';
-                document.getElementById('receivedAmountSection').style.display = 'none';
                 return;
             }
 
-            const descriptions = {
-                'A': 'مشتری ریال به شما ← شما دلار ذخیره به صراف ← صراف تتر به سورس',
-                'B': 'مشتری ریال مستقیم به صراف ← صراف تتر به سورس',
-                'C': 'مشتری دلار مستقیم به صراف ← صراف تتر به سورس',
-                'D': 'مشتری ریال/دلار به شما ← شما تتر شخصی به سورس'
-            };
-
-            const hints = {
-                'A': 'مبلغ تومانی از مشتری',
-                'B': 'مبلغ تومانی به صراف',
-                'C': 'مبلغ دلاری به صراف',
-                'D': 'مبلغ دریافتی (تومان یا دلار)'
-            };
-
-            document.getElementById('methodDescriptionText').textContent = descriptions[method];
-            document.getElementById('receivedAmountHint').textContent = hints[method];
-            document.getElementById('methodDescription').style.display = 'block';
-            document.getElementById('receivedAmountSection').style.display = 'block';
-            calculate();
-        }
-
-        function calculate() {
-            // همیشه نرخ پایه را محاسبه کن
-            updateAnnouncedRate();
-            
-            if (!state.paymentMethod) {
-                document.getElementById('calculationResults').innerHTML = 
-                    '<p style="text-align: center; color: #999; padding: 40px 0;">روش پرداخت را انتخاب کنید</p>';
-                return;
-            }
-
-            const cny = safeValue(document.getElementById('cnyAmount').value);
-            const rateCNY = safeValue(document.getElementById('rateCNY').value);
-
-            if (cny === 0 || rateCNY === 0) {
-                document.getElementById('calculationResults').innerHTML = 
-                    '<p style="text-align: center; color: #999; padding: 40px 0;">مقدار یوآن و ریت را وارد کنید</p>';
-                return;
-            }
-
-            const commission = safeValue(document.getElementById('commission').value);
-            const usdtRateExchange = safeValue(document.getElementById('usdtRateExchange').value);
-            const dollarRateExchange = safeValue(document.getElementById('dollarRateExchange').value);
-            const dollarToUsdt = safeValue(document.getElementById('dollarToUsdt').value) || 1.0;
-            const receivedAmount = safeValue(document.getElementById('receivedAmount').value);
-
-            let result = {};
-            switch(state.paymentMethod) {
-                case 'A': result = calculateMethodA(cny, rateCNY, commission, dollarRateExchange, dollarToUsdt, receivedAmount); break;
-                case 'B': result = calculateMethodB(cny, rateCNY, commission, usdtRateExchange, receivedAmount); break;
-                case 'C': result = calculateMethodC(cny, rateCNY, commission, dollarRateExchange, dollarToUsdt, receivedAmount); break;
-                case 'D': result = calculateMethodD(cny, rateCNY, commission, usdtRateExchange, receivedAmount); break;
-            }
-
-            displayResults(result, state.paymentMethod);
-        }
-
-        function calculateMethodA(cny, rateCNY, commission, dollarRateExchange, dollarToUsdt, receivedAmount) {
-            const usdtNeeded = cny / rateCNY;
-            const dollarCost = usdtNeeded * dollarToUsdt;
-            const rialCostOfDollar = dollarCost * dollarRateExchange;
-            const commissionTotal = cny * commission;
-            const profit = receivedAmount - (rialCostOfDollar + commissionTotal);
-            return { usdtNeeded, dollarCost, rialCostOfDollar, commissionTotal, receivedAmount, profit };
-        }
-
-        function calculateMethodB(cny, rateCNY, commission, usdtRateExchange, receivedAmount) {
-            const usdtNeeded = cny / rateCNY;
-            const rialCost = usdtNeeded * usdtRateExchange;
-            const commissionTotal = cny * commission;
-            const profit = receivedAmount - (rialCost + commissionTotal);
-            return { usdtNeeded, rialCost, commissionTotal, receivedAmount, profit };
-        }
-
-        function calculateMethodC(cny, rateCNY, commission, dollarRateExchange, dollarToUsdt, receivedAmount) {
-            const usdtNeeded = cny / rateCNY;
-            const dollarCost = usdtNeeded * dollarToUsdt;
-            const commissionRial = cny * commission;
-            const profitDollar = receivedAmount - dollarCost;
-            const profitRial = (profitDollar * dollarRateExchange) - commissionRial;
-            return { usdtNeeded, dollarCost, commissionRial, profitDollar, profitRial };
-        }
-
-        function calculateMethodD(cny, rateCNY, commission, usdtRateExchange, receivedAmount) {
-            const usdtNeeded = cny / rateCNY;
-            const usdtCostRial = usdtNeeded * usdtRateExchange;
-            const commissionTotal = cny * commission;
-            const profit = receivedAmount - usdtCostRial - commissionTotal;
-            return { usdtNeeded, usdtCostRial, commissionTotal, receivedAmount, profit };
-        }
-
-        function displayResults(result, method) {
-            const names = { 'A': '🔵 روش A', 'B': '🟢 روش B', 'C': '🟡 روش C', 'D': '🟣 روش D' };
-
-            let html = `<div style="padding: 15px; background: #f0f4ff; border-radius: 8px; margin-bottom: 15px;">
-                <h3 style="margin: 0; color: #667eea;">${names[method]}</h3>
-            </div>`;
-
-            html += `<div class="result-card"><h3>💎 تتر مورد نیاز</h3><div class="value">${result.usdtNeeded.toFixed(2)} USDT</div></div>`;
-
-            if (method === 'A') {
-                html += `<div class="result-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);"><h3>💵 دلار مورد نیاز</h3><div class="value">${result.dollarCost.toFixed(2)} $</div></div>`;
-                html += `<div class="result-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>💰 هزینه تومانی</h3><div class="value">${Math.round(result.rialCostOfDollar).toLocaleString('fa-IR')} تومان</div></div>`;
-            }
-
-            if (method === 'B') {
-                html += `<div class="result-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>💰 هزینه تتر</h3><div class="value">${Math.round(result.rialCost).toLocaleString('fa-IR')} تومان</div></div>`;
-            }
-
-            if (method === 'C') {
-                html += `<div class="result-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);"><h3>💵 هزینه دلاری</h3><div class="value">${result.dollarCost.toFixed(2)} $</div></div>`;
-            }
-
-            if (method === 'D') {
-                html += `<div class="result-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><h3>💰 ارزش تومانی تتر</h3><div class="value">${Math.round(result.usdtCostRial).toLocaleString('fa-IR')} تومان</div></div>`;
-            }
-
-            html += `<div class="result-card" style="background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);"><h3>📊 کمیسیون</h3><div class="value">${Math.round(result.commissionTotal || result.commissionRial || 0).toLocaleString('fa-IR')} تومان</div></div>`;
-
-            const profit = result.profit !== undefined ? result.profit : result.profitRial;
-            html += `<div class="result-card" style="background: ${profit >= 0 ? '#28a745' : '#dc3545'};"><h3 style="color: white;">🎯 سود خالص</h3><div class="value" style="color: white;">${Math.round(profit).toLocaleString('fa-IR')} تومان</div></div>`;
-
-            document.getElementById('calculationResults').innerHTML = html;
-        }
-
-        function analyzeCompetitive() {
-            const cny = safeValue(document.getElementById('cnyAmount').value);
-            const competitorRate = safeValue(document.getElementById('competitorRate').value);
-            const announcedRate = state.baseRate + state.tolerance;
-
-            if (cny === 0 || competitorRate === 0 || announcedRate === 0) {
-                showToast('فیلدها را پر کنید', 'warning');
-                return;
-            }
-
-            const competitorTotal = cny * competitorRate;
-            const ourTotal = cny * announcedRate;
-            const difference = ourTotal - competitorTotal;
-            const isCompetitive = difference <= 0;
-
-            document.getElementById('competitiveResults').innerHTML = `
-                <div style="margin-top: 20px; padding: 20px; background: ${isCompetitive ? '#d4edda' : '#f8d7da'}; border-radius: 10px;">
-                    <h3 style="color: ${isCompetitive ? '#155724' : '#721c24'};">${isCompetitive ? '✅ رقابتی است' : '⚠️ رقیب بهتر است'}</h3>
-                    <p style="margin: 8px 0;"><strong>رقیب:</strong> ${Math.round(competitorTotal).toLocaleString('fa-IR')} تومان</p>
-                    <p style="margin: 8px 0;"><strong>شما:</strong> ${Math.round(ourTotal).toLocaleString('fa-IR')} تومان</p>
-                    <p style="margin: 8px 0;"><strong>اختلاف:</strong> ${Math.round(difference).toLocaleString('fa-IR')} تومان</p>
+            container.innerHTML = `
+                <div class="rate-display success">
+                    <h3>💎 نرخ تتر (بازار)</h3>
+                    <div class="rate-value">${state.marketRates.usdt.toLocaleString('fa-IR')} تومان</div>
+                </div>
+                <div class="rate-display">
+                    <h3>🔄 ریت تتر/یوآن (بازار)</h3>
+                    <div class="rate-value">${state.marketRates.usdtToCny}</div>
                 </div>
             `;
         }
 
-        async function saveToGoogleSheet() {
-            if (!state.paymentMethod) {
-                showToast('روش پرداخت را انتخاب کنید', 'error');
+        // ========================================
+        // 💰 Number Formatting
+        // ========================================
+        function formatNumber(input) {
+            let value = input.value.replace(/,/g, '');
+            if (!isNaN(value) && value !== '') {
+                input.value = parseFloat(value).toLocaleString('en-US');
+            }
+        }
+
+        function parseFormattedNumber(value) {
+            if (typeof value === 'string') {
+                return parseFloat(value.replace(/,/g, '')) || 0;
+            }
+            return parseFloat(value) || 0;
+        }
+
+        // ========================================
+        // 🏷️ Calculate Cost Rate
+        // ========================================
+        function calculateCostRate() {
+            const usdtRate = parseFormattedNumber(document.getElementById('usdtRateExchange').value);
+            const cnyToUsdt = parseFloat(document.getElementById('cnyToUsdtSource').value) || 0;
+            const commission = parseFormattedNumber(document.getElementById('commissionPerCNY').value);
+
+            if (usdtRate > 0 && cnyToUsdt > 0) {
+                // محاسبه: (نرخ تتر / ریت یوآن به تتر) + کمیسیون
+                const costRate = (usdtRate / cnyToUsdt) + commission;
+                state.costRate = costRate;
+
+                document.getElementById('costRateValue').textContent = Math.round(costRate).toLocaleString('fa-IR');
+                document.getElementById('costRateDisplay').style.display = 'block';
+
+                // فعال کردن دکمه قفل اگر نرخ فروش هم وارد شده باشد
+                checkLockButtonState();
+            } else {
+                document.getElementById('costRateDisplay').style.display = 'none';
+            }
+        }
+
+        // ========================================
+        // 📈 Competition Analysis
+        // ========================================
+        function analyzeCompetition() {
+            const sellingRate = parseFormattedNumber(document.getElementById('sellingRate').value);
+            const competitorRate = parseFormattedNumber(document.getElementById('competitorRate').value);
+
+            if (state.costRate === 0) {
+                showToast('⚠️ ابتدا نرخ‌های دریافتی را وارد کنید', 'warning');
                 return;
             }
 
-            const data = {
-                date: new Date().toISOString(),
-                persianTime: new Date().toLocaleString('fa-IR', { timeZone: 'Asia/Tehran' }),
-                paymentMethod: state.paymentMethod,
-                cny: safeValue(document.getElementById('cnyAmount').value),
-                rateCNY: safeValue(document.getElementById('rateCNY').value),
-                usdtRateExchange: safeValue(document.getElementById('usdtRateExchange').value),
-                dollarRateExchange: safeValue(document.getElementById('dollarRateExchange').value),
-                dollarToUsdt: safeValue(document.getElementById('dollarToUsdt').value),
-                commission: safeValue(document.getElementById('commission').value),
-                receivedAmount: safeValue(document.getElementById('receivedAmount').value),
-                baseRate: Math.round(state.baseRate),
-                tolerance: state.tolerance,
-                finalRate: Math.round(state.baseRate + state.tolerance),
-                competitorRate: safeValue(document.getElementById('competitorRate').value),
-                status: document.getElementById('status').value,
-                notes: document.getElementById('notes').value
-            };
+            if (sellingRate === 0 || competitorRate === 0) {
+                showToast('⚠️ نرخ فروش و رقیب را وارد کنید', 'warning');
+                return;
+            }
 
-            try {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                showToast('✅ ذخیره شد', 'success');
-                setTimeout(loadFromGoogleSheet, 2000);
-            } catch (error) {
-                console.error(error);
-                showToast('خطا در ذخیره', 'error');
+            // محاسبات
+            const profitMargin = sellingRate - state.costRate;
+            const rateDiff = sellingRate - competitorRate;
+            const isCompetitive = rateDiff <= 0;
+
+            // نمایش نتایج
+            document.getElementById('yourCostRate').textContent = Math.round(state.costRate).toLocaleString('fa-IR') + ' تومان';
+            document.getElementById('yourSellingRate').textContent = Math.round(sellingRate).toLocaleString('fa-IR') + ' تومان';
+            document.getElementById('competitorRateDisplay').textContent = Math.round(competitorRate).toLocaleString('fa-IR') + ' تومان';
+            
+            const diffElement = document.getElementById('rateDifference');
+            diffElement.textContent = Math.round(Math.abs(rateDiff)).toLocaleString('fa-IR') + ' تومان';
+            diffElement.className = 'comparison-value ' + (rateDiff > 0 ? 'negative' : rateDiff < 0 ? 'positive' : 'neutral');
+
+            const marginElement = document.getElementById('profitMargin');
+            marginElement.textContent = Math.round(profitMargin).toLocaleString('fa-IR') + ' تومان';
+            marginElement.className = 'comparison-value ' + (profitMargin > 0 ? 'positive' : 'negative');
+
+            // نتیجه تحلیل
+            const resultHTML = `
+                <div style="background: ${isCompetitive ? '#d4edda' : '#fff3cd'}; 
+                            color: ${isCompetitive ? '#155724' : '#856404'}; 
+                            padding: 15px; border-radius: 10px; text-align: center; font-weight: 600;">
+                    ${isCompetitive ? '✅ نرخ شما رقابتی است!' : '⚠️ رقیب نرخ بهتری دارد'}
+                    <br>
+                    <small style="display: block; margin-top: 8px; font-weight: 400;">
+                        ${isCompetitive ? 'نرخ شما از رقیب کمتر است' : 'نرخ شما ' + Math.round(Math.abs(rateDiff)).toLocaleString('fa-IR') + ' تومان بیشتر است'}
+                    </small>
+                </div>
+            `;
+
+            document.getElementById('competitionResult').innerHTML = resultHTML;
+            document.getElementById('competitionAnalysis').style.display = 'block';
+
+            checkLockButtonState();
+        }
+
+        // ========================================
+        // 🔒 Lock Selling Rate
+        // ========================================
+        function checkLockButtonState() {
+            const sellingRate = parseFormattedNumber(document.getElementById('sellingRate').value);
+            const lockBtn = document.getElementById('lockRateBtn');
+
+            if (state.costRate > 0 && sellingRate > 0) {
+                lockBtn.disabled = false;
+            } else {
+                lockBtn.disabled = true;
             }
         }
 
-        async function loadFromGoogleSheet() {
+        function lockSellingRate() {
+            const sellingRate = parseFormattedNumber(document.getElementById('sellingRate').value);
+
+            if (sellingRate === 0) {
+                showToast('⚠️ نرخ فروش را وارد کنید', 'warning');
+                return;
+            }
+
+            state.lockedSellingRate = sellingRate;
+            state.isRateLocked = true;
+
+            document.getElementById('lockedRateValue').textContent = Math.round(sellingRate).toLocaleString('fa-IR');
+            document.getElementById('lockedRateDisplay').style.display = 'block';
+            document.getElementById('lockRateBtn').disabled = true;
+            document.getElementById('sellingRate').disabled = true;
+
+            // به مرحله 2 برو
+            updateProgressStep(2);
+
+            showToast('✅ نرخ فروش قفل شد', 'success');
+        }
+
+        // ========================================
+        // 📝 Transaction Calculations
+        // ========================================
+        function calculateFromCNY() {
+            const cnyAmount = parseFloat(document.getElementById('cnyAmount').value) || 0;
+
+            if (cnyAmount > 0 && state.lockedSellingRate > 0) {
+                const tomanAmount = cnyAmount * state.lockedSellingRate;
+                document.getElementById('tomanAmount').value = Math.round(tomanAmount).toLocaleString('en-US');
+                calculateTransaction();
+            }
+        }
+
+        function calculateFromToman() {
+            const tomanAmount = parseFormattedNumber(document.getElementById('tomanAmount').value);
+
+            if (tomanAmount > 0 && state.lockedSellingRate > 0) {
+                const cnyAmount = tomanAmount / state.lockedSellingRate;
+                document.getElementById('cnyAmount').value = Math.round(cnyAmount);
+                calculateTransaction();
+            }
+        }
+
+        function calculateTransaction() {
+            const cnyAmount = parseFloat(document.getElementById('cnyAmount').value) || 0;
+            const tomanAmount = parseFormattedNumber(document.getElementById('tomanAmount').value);
+            const sourceSettlement = document.getElementById('sourceSettlement').value;
+            const customerSettlement = document.getElementById('customerSettlement').value;
+
+            // نمایش/مخفی کردن فیلد نرخ تتر شخصی
+            if (sourceSettlement === 'personal-usdt') {
+                document.getElementById('personalUsdtGroup').style.display = 'block';
+            } else {
+                document.getElementById('personalUsdtGroup').style.display = 'none';
+            }
+
+            if (cnyAmount === 0 || tomanAmount === 0 || !sourceSettlement || !customerSettlement) {
+                document.getElementById('transactionCalculations').style.display = 'none';
+                document.getElementById('finalizeBtn').disabled = true;
+                return;
+            }
+
+            if (!state.isRateLocked) {
+                showToast('⚠️ ابتدا نرخ فروش را قفل کنید', 'warning');
+                return;
+            }
+
+            // محاسبات اصلی
+            const usdtRateExchange = parseFormattedNumber(document.getElementById('usdtRateExchange').value);
+            const cnyToUsdt = parseFloat(document.getElementById('cnyToUsdtSource').value) || 0;
+            const commission = parseFormattedNumber(document.getElementById('commissionPerCNY').value);
+
+            // تتر مورد نیاز
+            const usdtNeeded = cnyAmount / cnyToUsdt;
+
+            // محاسبه هزینه تتر
+            let usdtCost = 0;
+            let costComparisonText = '';
+
+            if (sourceSettlement === 'exchange-usdt') {
+                usdtCost = usdtNeeded * usdtRateExchange;
+                const marketUsdtCost = usdtNeeded * state.marketRates.usdt;
+                const savingsVsMarket = marketUsdtCost - usdtCost;
+                costComparisonText = `مقایسه با بازار: ${savingsVsMarket >= 0 ? 'صرفه‌جویی' : 'ضرر'} ${Math.abs(Math.round(savingsVsMarket)).toLocaleString('fa-IR')} تومان`;
+            } else if (sourceSettlement === 'personal-usdt') {
+                const personalRate = parseFormattedNumber(document.getElementById('personalUsdtRate').value);
+                if (personalRate === 0) {
+                    showToast('⚠️ نرخ خرید تتر شخصی را وارد کنید', 'warning');
+                    return;
+                }
+                usdtCost = usdtNeeded * personalRate;
+                const exchangeCost = usdtNeeded * usdtRateExchange;
+                const savingsVsExchange = exchangeCost - usdtCost;
+                costComparisonText = `مقایسه با صرافی: ${savingsVsExchange >= 0 ? 'صرفه‌جویی' : 'ضرر'} ${Math.abs(Math.round(savingsVsExchange)).toLocaleString('fa-IR')} تومان`;
+            }
+
+            // کمیسیون کل
+            const totalCommission = cnyAmount * commission;
+
+            // درآمد از مشتری
+            const customerPayment = tomanAmount;
+
+            // محاسبه سود/زیان
+            const profit = customerPayment - usdtCost - totalCommission;
+
+            // نمایش نتایج
+            let detailsHTML = `
+                <div class="result-row">
+                    <span class="result-label">💎 تتر مورد نیاز:</span>
+                    <span class="result-value">${usdtNeeded.toFixed(2)} USDT</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">💰 هزینه تتر:</span>
+                    <span class="result-value">${Math.round(usdtCost).toLocaleString('fa-IR')} تومان</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">📊 کمیسیون رابط:</span>
+                    <span class="result-value">${Math.round(totalCommission).toLocaleString('fa-IR')} تومان</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">💵 دریافتی از مشتری:</span>
+                    <span class="result-value">${Math.round(customerPayment).toLocaleString('fa-IR')} تومان</span>
+                </div>
+            `;
+
+            if (costComparisonText) {
+                detailsHTML += `
+                    <div class="result-row">
+                        <span class="result-label">📈 تحلیل:</span>
+                        <span class="result-value" style="font-size: 0.85rem;">${costComparisonText}</span>
+                    </div>
+                `;
+            }
+
+            document.getElementById('calculationDetails').innerHTML = detailsHTML;
+
+            const profitHTML = `
+                <h4>🎯 سود خالص</h4>
+                <div class="big-value" style="color: ${profit >= 0 ? '#d4edda' : '#f8d7da'};">
+                    ${profit >= 0 ? '+' : ''}${Math.round(profit).toLocaleString('fa-IR')} تومان
+                </div>
+                <small style="display: block; margin-top: 5px; opacity: 0.9;">
+                    ${profit >= 0 ? '✅ معامله سودآور است' : '⚠️ معامله زیان‌ده است'}
+                </small>
+            `;
+
+            document.getElementById('profitDisplay').innerHTML = profitHTML;
+            document.getElementById('profitDisplay').style.background = profit >= 0 
+                ? 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' 
+                : 'linear-gradient(135deg, #ee0979 0%, #ff6a00 100%)';
+
+            document.getElementById('transactionCalculations').style.display = 'block';
+            document.getElementById('finalizeBtn').disabled = false;
+
+            // به مرحله 3 برو
+            updateProgressStep(3);
+        }
+
+        // ========================================
+        // 📊 Progress Steps
+        // ========================================
+        function updateProgressStep(step) {
+            state.currentStep = step;
+
+            for (let i = 1; i <= 5; i++) {
+                const stepElement = document.getElementById(`step${i}`);
+                if (i < step) {
+                    stepElement.className = 'progress-step completed';
+                } else if (i === step) {
+                    stepElement.className = 'progress-step active';
+                } else {
+                    stepElement.className = 'progress-step';
+                }
+            }
+
+            const fillPercentage = ((step - 1) / 4) * 100;
+            document.getElementById('progressFill').style.width = fillPercentage + '%';
+        }
+
+        function getProgressStatus() {
+            const statusMap = {
+                1: '⏳ پیش‌فاکتور',
+                2: '✅ تایید',
+                3: '💰 واریز',
+                4: '📤 حواله',
+                5: '✔️ تکمیل'
+            };
+            return statusMap[state.currentStep] || '⏳ پیش‌فاکتور';
+        }
+
+        // ========================================
+        // ✅ Finalize Transaction
+        // ========================================
+        async function finalizeTransaction() {
+            const customerName = document.getElementById('customerName').value;
+            const notes = document.getElementById('notes').value;
+
+            if (!customerName) {
+                showToast('⚠️ نام مشتری را وارد کنید', 'warning');
+                return;
+            }
+
+            // جمع‌آوری اطلاعات
+            const cnyAmount = parseFloat(document.getElementById('cnyAmount').value) || 0;
+            const tomanAmount = parseFormattedNumber(document.getElementById('tomanAmount').value) || 0;
+            const cnyToUsdtSource = parseFloat(document.getElementById('cnyToUsdtSource').value) || 0;
+            const usdtRateExchange = parseFormattedNumber(document.getElementById('usdtRateExchange').value) || 0;
+            const commissionPerCny = parseFormattedNumber(document.getElementById('commissionPerCNY').value) || 0;
+            
+            // محاسبه تتر مورد نیاز
+            const usdtNeeded = cnyAmount / cnyToUsdtSource;
+            
+            // محاسبه هزینه تتر بر اساس روش تسویه
+            let usdtCost = 0;
+            const sourceSettlement = document.getElementById('sourceSettlement').value;
+            if (sourceSettlement === 'personal-usdt') {
+                const personalUsdtRate = parseFormattedNumber(document.getElementById('personalUsdtRate').value) || 0;
+                usdtCost = usdtNeeded * personalUsdtRate;
+            } else {
+                usdtCost = usdtNeeded * usdtRateExchange;
+            }
+            
+            // محاسبه کمیسیون و سود
+            const totalCommission = cnyAmount * commissionPerCny;
+            const finalProfit = tomanAmount - usdtCost - totalCommission;
+
+            const transactionData = {
+                datetime: new Date().toISOString(),
+                persianDate: new Date().toLocaleString('fa-IR', { timeZone: 'Asia/Tehran' }),
+                customerName: customerName,
+                cnyAmount: cnyAmount,
+                tomanAmount: tomanAmount,
+                marketUsdtRate: state.marketRates.usdt,
+                marketCnyRate: state.marketRates.usdtToCny,
+                marketUsdtToCny: state.marketRates.usdtToCny,
+                exchangeUsdtRate: usdtRateExchange,
+                exchangeDollarRate: parseFormattedNumber(document.getElementById('dollarRateExchange').value) || 0,
+                exchangeDollarToUsdt: parseFloat(document.getElementById('dollarToUsdt').value) || 0,
+                sourceUsdtToCny: cnyToUsdtSource,
+                commissionPerCny: commissionPerCny,
+                costRate: state.costRate,
+                finalSellRate: state.lockedSellingRate,
+                competitorRate: parseFormattedNumber(document.getElementById('competitorRate').value) || 0,
+                sourceSettlement: sourceSettlement,
+                customerSettlement: document.getElementById('customerSettlement').value,
+                personalUsdtRate: sourceSettlement === 'personal-usdt' ? parseFormattedNumber(document.getElementById('personalUsdtRate').value) : 0,
+                finalProfit: finalProfit,
+                usdtNeeded: usdtNeeded,
+                status: getProgressStatus(),
+                notes: notes
+            };
+
+            // به مرحله 4 برو
+            updateProgressStep(4);
+
+            try {
+                console.log('Sending transaction data:', transactionData);
+                
+                // ارسال به Google Sheets
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(transactionData),
+                    redirect: 'follow'
+                });
+
+                console.log('Response status:', response.status);
+                
+                // چک کردن response
+                let responseData;
+                try {
+                    responseData = await response.json();
+                    console.log('Response data:', responseData);
+                } catch (e) {
+                    console.log('Could not parse response as JSON');
+                }
+
+                // به مرحله 5 برو
+                updateProgressStep(5);
+
+                showToast('✅ معامله با موفقیت ذخیره شد', 'success');
+
+                // بارگذاری مجدد تراکنش‌ها
+                setTimeout(() => {
+                    loadLastTransactions();
+                    // پیشنهاد ریست
+                    if (confirm('معامله ثبت شد. آیا می‌خواهید صفحه را برای معامله جدید ریست کنید؟')) {
+                        resetPage();
+                    }
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error saving transaction:', error);
+                showToast('❌ خطا در ذخیره معامله', 'error');
+            }
+        }
+
+        // ========================================
+        // 📋 Load Last Transactions
+        // ========================================
+        async function loadLastTransactions() {
             try {
                 const response = await fetch(`${SCRIPT_URL}?action=getLastRecords&count=5`);
                 const data = await response.json();
+
                 if (data.success && data.records && data.records.length > 0) {
-                    displayRecords(data.records);
+                    displayTransactions(data.records);
                 } else {
-                    document.getElementById('recordsList').innerHTML = '<p style="text-align: center; color: #999;">رکوردی یافت نشد</p>';
+                    document.getElementById('lastTransactions').innerHTML = 
+                        '<p style="text-align: center; color: #999; padding: 30px 0;">هنوز تراکنشی ثبت نشده است</p>';
                 }
-            } catch {
-                document.getElementById('recordsList').innerHTML = '<p style="text-align: center; color: #ff6a00;">خطا در بارگذاری</p>';
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                document.getElementById('lastTransactions').innerHTML = 
+                    '<p style="text-align: center; color: #ff6a00; padding: 30px 0;">خطا در بارگذاری تراکنش‌ها</p>';
             }
         }
 
-        function displayRecords(records) {
+        function displayTransactions(records) {
             let html = '';
-            records.forEach(record => {
-                const method = record[2] || 'A';
-                const status = record[14] || 'در انتظار';
-                const statusClass = status.includes('انتظار') ? 'status-pending' : 
-                                   status.includes('تایید') ? 'status-confirmed' : 
-                                   status.includes('پرداخت') ? 'status-paid' : 'status-cancelled';
+
+            records.forEach((record, index) => {
+                const profit = parseFloat(record[19]) || 0; // ستون سود/زیان نهایی
+                const isProfitable = profit >= 0;
+                const status = record[21] || '⏳ پیش‌فاکتور';
 
                 html += `
                     <div class="record-item">
                         <div class="record-header">
-                            <div style="display: flex; gap: 8px;">
-                                <span class="record-badge method-${method}">${method}</span>
-                                <span class="record-badge ${statusClass}">${status}</span>
+                            <div>
+                                <span class="record-badge ${isProfitable ? 'success' : 'warning'}">
+                                    ${isProfitable ? '✅ سودآور' : '⚠️ زیان‌ده'}
+                                </span>
+                                <span class="record-badge info">${status}</span>
+                                <span style="font-weight: 600; color: #667eea; margin-right: 8px;">${record[2] || 'بدون نام'}</span>
                             </div>
-                            <span style="font-size: 0.85rem; color: #666;">📅 ${record[1] || '-'}</span>
+                            <span style="font-size: 0.8rem; color: #6c757d;">📅 ${record[1] || '-'}</span>
                         </div>
                         <div class="record-content">
-                            <span class="record-item-field">💵 <strong>یوآن:</strong> ${safeValue(record[3]).toLocaleString('fa-IR')}</span>
-                            <span class="record-item-field">📊 <strong>ریت:</strong> ${safeValue(record[4])}</span>
-                            <span class="record-item-field">📢 <strong>نرخ اعلامی:</strong> ${safeValue(record[12]).toLocaleString('fa-IR')} تومان</span>
-                            ${record[11] > 0 ? `<span class="record-item-field" style="color: #f5576c;">🎚️ <strong>تلرانس:</strong> +${record[11]}</span>` : ''}
-                            <span class="record-item-field">💰 <strong>دریافتی:</strong> ${safeValue(record[9]).toLocaleString('fa-IR')} تومان</span>
-                            ${record[15] ? `<span class="record-item-field">📝 <strong>یادداشت:</strong> ${record[15]}</span>` : ''}
+                            <div class="record-field">💵 <strong>یوآن:</strong> ${parseFloat(record[3] || 0).toLocaleString('fa-IR')}</div>
+                            <div class="record-field">💰 <strong>تومان:</strong> ${parseFloat(record[4] || 0).toLocaleString('fa-IR')}</div>
+                            <div class="record-field">📊 <strong>نرخ فروش:</strong> ${parseFloat(record[14] || 0).toLocaleString('fa-IR')}</div>
+                            <div class="record-field">💎 <strong>تتر:</strong> ${parseFloat(record[20] || 0).toFixed(2)} USDT</div>
+                            <div class="record-field">🎯 <strong>سود:</strong> <span style="color: ${isProfitable ? '#28a745' : '#dc3545'}; font-weight: 700;">${Math.round(profit).toLocaleString('fa-IR')} تومان</span></div>
+                            <div class="record-field">🏦 <strong>تسویه مشتری:</strong> ${record[17] || '-'}</div>
+                            ${record[22] ? `<div class="record-field" style="grid-column: 1/-1;">📝 <strong>یادداشت:</strong> ${record[22]}</div>` : ''}
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('recordsList').innerHTML = html;
+
+            document.getElementById('lastTransactions').innerHTML = html;
         }
 
+        // ========================================
+        // 🔄 Reset Page
+        // ========================================
         function resetPage() {
-            if (confirm('پاک شود؟')) {
-                document.querySelectorAll('input[type="number"], input[type="text"], select').forEach(input => {
-                    if (input.id !== 'dollarToUsdt') input.value = '';
-                });
-                document.getElementById('paymentMethod').value = '';
-                document.getElementById('dollarToUsdt').value = '1.0';
-                state.paymentMethod = '';
-                state.tolerance = 0;
-                state.baseRate = 0;
-                document.querySelectorAll('.tolerance-btn').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.tolerance-btn')[0].classList.add('active');
-                document.getElementById('methodDescription').style.display = 'none';
-                document.getElementById('receivedAmountSection').style.display = 'none';
-                document.getElementById('announcedRateDisplay').style.display = 'none';
-                document.getElementById('calculationResults').innerHTML = '<p style="text-align: center; color: #999; padding: 40px 0;">روش پرداخت را انتخاب کنید</p>';
-                document.getElementById('competitiveResults').innerHTML = '';
-                showToast('✅ ریست شد', 'success');
-            }
+            // ریست فیلدها
+            document.querySelectorAll('input[type="text"], input[type="number"], select').forEach(input => {
+                if (!['dollarToUsdt', 'cnyToUsdtSource'].includes(input.id)) {
+                    input.value = '';
+                    input.disabled = false;
+                }
+            });
+
+            // ریست state
+            state.costRate = 0;
+            state.lockedSellingRate = 0;
+            state.isRateLocked = false;
+
+            // ریست UI
+            document.getElementById('costRateDisplay').style.display = 'none';
+            document.getElementById('competitionAnalysis').style.display = 'none';
+            document.getElementById('lockedRateDisplay').style.display = 'none';
+            document.getElementById('transactionCalculations').style.display = 'none';
+            document.getElementById('personalUsdtGroup').style.display = 'none';
+            document.getElementById('lockRateBtn').disabled = true;
+            document.getElementById('finalizeBtn').disabled = true;
+
+            // ریست progress
+            updateProgressStep(1);
+
+            showToast('✅ صفحه ریست شد', 'success');
         }
 
+        // ========================================
+        // 🔔 Toast Notifications
+        // ========================================
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = `toast ${type}`;
             toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 3000);
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
         }
 
+        // ========================================
+        // 🚀 Start Application
+        // ========================================
         window.onload = init;
     </script>
 </body>
