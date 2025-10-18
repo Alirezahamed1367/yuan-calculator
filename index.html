@@ -1437,13 +1437,14 @@
             try {
                 console.log('Sending transaction data:', transactionData);
                 
-                // ارسال به Google Sheets
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(transactionData),
+                // ارسال به Google Sheets با GET method
+                const dataStr = encodeURIComponent(JSON.stringify(transactionData));
+                const url = `${SCRIPT_URL}?action=saveTransaction&data=${dataStr}`;
+                
+                console.log('Request URL length:', url.length);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
                     redirect: 'follow'
                 });
 
@@ -1456,6 +1457,10 @@
                     console.log('Response data:', responseData);
                 } catch (e) {
                     console.log('Could not parse response as JSON');
+                }
+
+                if (!responseData || !responseData.success) {
+                    throw new Error(responseData?.error || 'Failed to save transaction');
                 }
 
                 // به مرحله 5 برو
@@ -1474,7 +1479,7 @@
 
             } catch (error) {
                 console.error('Error saving transaction:', error);
-                showToast('❌ خطا در ذخیره معامله', 'error');
+                showToast('❌ خطا در ذخیره معامله: ' + error.message, 'error');
             }
         }
 
