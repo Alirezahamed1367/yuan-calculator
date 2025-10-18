@@ -98,6 +98,27 @@
             background: #f9f9f9;
         }
 
+        /* Grid Layout for Multiple Columns */
+        .two-column-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .three-column-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        /* Rate Cards Container */
+        .rate-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
         .input-group input:focus,
         .input-group select:focus {
             outline: none;
@@ -501,6 +522,13 @@
                 font-size: 1.1rem;
             }
 
+            /* Grid به تک ستون تبدیل میشه در موبایل */
+            .two-column-grid,
+            .three-column-grid,
+            .rate-cards-container {
+                grid-template-columns: 1fr;
+            }
+
             .progress-step-circle {
                 width: 35px;
                 height: 35px;
@@ -603,7 +631,7 @@
         <div class="card">
             <h2 class="card-title">📊 نرخ‌های بازار (بروزرسانی خودکار)</h2>
             
-            <div id="marketRatesDisplay">
+            <div class="rate-cards-container" id="marketRatesDisplay">
                 <div class="rate-display">
                     <h3>⏳ در حال بارگذاری...</h3>
                     <div class="rate-value">لطفاً صبر کنید</div>
@@ -619,24 +647,26 @@
         <div class="card">
             <h2 class="card-title">💵 نرخ‌های دریافتی (ورودی دستی)</h2>
             
-            <div class="input-group">
-                <label for="usdtRateExchange">💎 نرخ تتر صرافی (تومان):</label>
-                <input type="text" id="usdtRateExchange" placeholder="75,000" inputmode="decimal" oninput="formatNumber(this); calculateCostRate();">
-            </div>
+            <div class="two-column-grid">
+                <div class="input-group">
+                    <label for="usdtRateExchange">💎 نرخ تتر صرافی (تومان):</label>
+                    <input type="text" id="usdtRateExchange" placeholder="75,000" inputmode="decimal" oninput="formatNumber(this); calculateCostRate();">
+                </div>
 
-            <div class="input-group">
-                <label for="dollarRateExchange">💵 نرخ دلار صرافی (تومان):</label>
-                <input type="text" id="dollarRateExchange" placeholder="70,000" inputmode="decimal" oninput="formatNumber(this); calculateCostRate();">
-            </div>
+                <div class="input-group">
+                    <label for="dollarRateExchange">💵 نرخ دلار صرافی (تومان):</label>
+                    <input type="text" id="dollarRateExchange" placeholder="70,000" inputmode="decimal" oninput="formatNumber(this); calculateCostRate();">
+                </div>
 
-            <div class="input-group">
-                <label for="dollarToUsdt">🔄 ریت دلار/تتر صرافی:</label>
-                <input type="number" id="dollarToUsdt" placeholder="1.05" step="0.01" inputmode="decimal" oninput="calculateCostRate();">
-            </div>
+                <div class="input-group">
+                    <label for="dollarToUsdt">🔄 ریت دلار/تتر صرافی:</label>
+                    <input type="number" id="dollarToUsdt" placeholder="1.05" step="0.01" inputmode="decimal" oninput="calculateCostRate();">
+                </div>
 
-            <div class="input-group">
-                <label for="cnyToUsdtSource">🇨🇳 ریت تتر/یوآن سورس:</label>
-                <input type="number" id="cnyToUsdtSource" placeholder="7.25" step="0.01" inputmode="decimal" oninput="calculateCostRate();">
+                <div class="input-group">
+                    <label for="cnyToUsdtSource">🇨🇳 ریت تتر/یوآن سورس:</label>
+                    <input type="number" id="cnyToUsdtSource" placeholder="7.25" step="0.01" inputmode="decimal" oninput="calculateCostRate();">
+                </div>
             </div>
 
             <div class="input-group">
@@ -656,15 +686,17 @@
         <div class="card">
             <h2 class="card-title">📈 تحلیل رقابتی و نرخ فروش</h2>
 
-            <!-- نرخ فروش دستی -->
-            <div class="input-group">
-                <label for="sellingRate">💲 نرخ فروش شما (تومان/یوآن):</label>
-                <input type="text" id="sellingRate" placeholder="11,000" inputmode="decimal" oninput="formatNumber(this); analyzeCompetition();">
-            </div>
+            <div class="two-column-grid">
+                <!-- نرخ فروش دستی -->
+                <div class="input-group">
+                    <label for="sellingRate">💲 نرخ فروش شما (تومان/یوآن):</label>
+                    <input type="text" id="sellingRate" placeholder="11,000" inputmode="decimal" oninput="formatNumber(this); analyzeCompetition();">
+                </div>
 
-            <div class="input-group">
-                <label for="competitorRate">🏪 نرخ رقیب (تومان/یوآن):</label>
-                <input type="text" id="competitorRate" placeholder="10,900" inputmode="decimal" oninput="formatNumber(this); analyzeCompetition();">
+                <div class="input-group">
+                    <label for="competitorRate">🏪 نرخ رقیب (تومان/یوآن):</label>
+                    <input type="text" id="competitorRate" placeholder="10,900" inputmode="decimal" oninput="formatNumber(this); analyzeCompetition();">
+                </div>
             </div>
 
             <button class="btn btn-warning" onclick="analyzeCompetition()">🔍 تحلیل مجدد</button>
@@ -746,26 +778,48 @@
             <div class="section-divider"></div>
 
             <!-- ورودی مبالغ -->
-            <div class="grid-2">
+            <div class="two-column-grid">
                 <div class="input-group">
                     <label for="cnyAmount">🇨🇳 مقدار یوآن:</label>
                     <input type="number" id="cnyAmount" placeholder="10000" inputmode="numeric" oninput="calculateFromCNY();">
                 </div>
 
                 <div class="input-group">
-                    <label for="tomanAmount">💰 مبلغ تومانی:</label>
+                    <label for="tomanAmount">💰 مبلغ محاسبه شده (تومان):</label>
                     <input type="text" id="tomanAmount" placeholder="110,000,000" inputmode="decimal" oninput="formatNumber(this); calculateFromToman();">
                 </div>
             </div>
 
-            <!-- روش تسویه با سورس -->
+            <!-- مبلغ واقعی دریافتی از مشتری -->
             <div class="input-group">
-                <label for="sourceSettlement">🔄 روش تسویه با سورس:</label>
-                <select id="sourceSettlement" onchange="calculateTransaction();">
-                    <option value="">-- انتخاب کنید --</option>
-                    <option value="exchange-usdt">تتر صرافی</option>
-                    <option value="personal-usdt">تتر شخصی</option>
-                </select>
+                <label for="actualReceivedAmount">� مبلغ واقعی دریافتی از مشتری (تومان):</label>
+                <input type="text" id="actualReceivedAmount" placeholder="100,000,000" inputmode="decimal" oninput="formatNumber(this); calculateTransaction();">
+                <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 0.85rem;">
+                    💡 مبلغی که مشتری واقعاً پرداخت کرده (ممکن است با مبلغ محاسبه شده متفاوت باشد)
+                </small>
+            </div>
+
+            <!-- روش تسویه - Grid دو ستونه -->
+            <div class="two-column-grid">
+                <div class="input-group">
+                    <label for="sourceSettlement">� روش تسویه با سورس:</label>
+                    <select id="sourceSettlement" onchange="calculateTransaction();">
+                        <option value="">-- انتخاب کنید --</option>
+                        <option value="exchange-usdt">تتر صرافی</option>
+                        <option value="personal-usdt">تتر شخصی</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="customerSettlement">💳 روش دریافت از مشتری:</label>
+                    <select id="customerSettlement" onchange="calculateTransaction();">
+                        <option value="">-- انتخاب کنید --</option>
+                        <option value="toman-personal">حساب شخصی ← تومان</option>
+                        <option value="toman-exchange">حساب صرافی ← تومان</option>
+                        <option value="dollar-personal">حساب شخصی ← دلار</option>
+                        <option value="dollar-exchange">حساب صرافی ← دلار</option>
+                    </select>
+                </div>
             </div>
 
             <!-- نرخ خرید تتر شخصی (فقط برای تتر شخصی) -->
@@ -774,27 +828,17 @@
                 <input type="text" id="personalUsdtRate" placeholder="74,000" inputmode="decimal" oninput="formatNumber(this); calculateTransaction();">
             </div>
 
-            <!-- روش تسویه با مشتری -->
-            <div class="input-group">
-                <label for="customerSettlement">💳 روش دریافت از مشتری:</label>
-                <select id="customerSettlement" onchange="calculateTransaction();">
-                    <option value="">-- انتخاب کنید --</option>
-                    <option value="toman-personal">حساب شخصی ← تومان</option>
-                    <option value="toman-exchange">حساب صرافی ← تومان</option>
-                    <option value="dollar-personal">حساب شخصی ← دلار</option>
-                    <option value="dollar-exchange">حساب صرافی ← دلار</option>
-                </select>
-            </div>
+            <!-- نام مشتری و توضیحات - Grid دو ستونه -->
+            <div class="two-column-grid">
+                <div class="input-group">
+                    <label for="customerName">👤 نام مشتری:</label>
+                    <input type="text" id="customerName" placeholder="نام و نام خانوادگی">
+                </div>
 
-            <!-- نام مشتری و توضیحات -->
-            <div class="input-group">
-                <label for="customerName">👤 نام مشتری:</label>
-                <input type="text" id="customerName" placeholder="نام و نام خانوادگی">
-            </div>
-
-            <div class="input-group">
-                <label for="notes">📝 توضیحات:</label>
-                <input type="text" id="notes" placeholder="توضیحات اضافی...">
+                <div class="input-group">
+                    <label for="notes">📝 توضیحات:</label>
+                    <input type="text" id="notes" placeholder="توضیحات اضافی...">
+                </div>
             </div>
 
             <!-- نتایج محاسبات -->
@@ -1328,10 +1372,14 @@
 
             // جمع‌آوری اطلاعات
             const cnyAmount = parseFloat(document.getElementById('cnyAmount').value) || 0;
-            const tomanAmount = parseFormattedNumber(document.getElementById('tomanAmount').value) || 0;
+            const tomanAmountCalculated = parseFormattedNumber(document.getElementById('tomanAmount').value) || 0;
+            const actualReceivedAmount = parseFormattedNumber(document.getElementById('actualReceivedAmount').value) || 0;
             const cnyToUsdtSource = parseFloat(document.getElementById('cnyToUsdtSource').value) || 0;
             const usdtRateExchange = parseFormattedNumber(document.getElementById('usdtRateExchange').value) || 0;
             const commissionPerCny = parseFormattedNumber(document.getElementById('commissionPerCNY').value) || 0;
+
+            // اگر مبلغ واقعی وارد نشده، از مبلغ محاسبه شده استفاده کن
+            const finalReceivedAmount = actualReceivedAmount > 0 ? actualReceivedAmount : tomanAmountCalculated;
             
             // محاسبه تتر مورد نیاز
             const usdtNeeded = cnyAmount / cnyToUsdtSource;
@@ -1346,16 +1394,21 @@
                 usdtCost = usdtNeeded * usdtRateExchange;
             }
             
-            // محاسبه کمیسیون و سود
+            // محاسبه کمیسیون و سود (بر اساس مبلغ واقعی دریافتی)
             const totalCommission = cnyAmount * commissionPerCny;
-            const finalProfit = tomanAmount - usdtCost - totalCommission;
+            const finalProfit = finalReceivedAmount - usdtCost - totalCommission;
+            
+            // محاسبه مابه‌التفاوت (تفاوت بین مبلغ واقعی و محاسبه شده)
+            const amountDifference = finalReceivedAmount - tomanAmountCalculated;
 
             const transactionData = {
                 datetime: new Date().toISOString(),
                 persianDate: new Date().toLocaleString('fa-IR', { timeZone: 'Asia/Tehran' }),
                 customerName: customerName,
                 cnyAmount: cnyAmount,
-                tomanAmount: tomanAmount,
+                tomanAmount: tomanAmountCalculated,
+                actualReceivedAmount: finalReceivedAmount,
+                amountDifference: amountDifference,
                 marketUsdtRate: state.marketRates.usdt,
                 marketCnyRate: state.marketRates.usdtToCny,
                 marketUsdtToCny: state.marketRates.usdtToCny,
@@ -1372,6 +1425,8 @@
                 personalUsdtRate: sourceSettlement === 'personal-usdt' ? parseFormattedNumber(document.getElementById('personalUsdtRate').value) : 0,
                 finalProfit: finalProfit,
                 usdtNeeded: usdtNeeded,
+                totalCommission: totalCommission,
+                usdtCost: usdtCost,
                 status: getProgressStatus(),
                 notes: notes
             };
