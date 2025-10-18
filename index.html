@@ -792,7 +792,7 @@
 
             <!-- مبلغ واقعی دریافتی از مشتری -->
             <div class="input-group">
-                <label for="actualReceivedAmount">� مبلغ واقعی دریافتی از مشتری (تومان):</label>
+                <label for="actualReceivedAmount">  مبلغ واقعی دریافتی از مشتری (تومان):</label>
                 <input type="text" id="actualReceivedAmount" placeholder="100,000,000" inputmode="decimal" oninput="formatNumber(this); calculateTransaction();">
                 <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 0.85rem;">
                     💡 مبلغی که مشتری واقعاً پرداخت کرده (ممکن است با مبلغ محاسبه شده متفاوت باشد)
@@ -802,7 +802,7 @@
             <!-- روش تسویه - Grid دو ستونه -->
             <div class="two-column-grid">
                 <div class="input-group">
-                    <label for="sourceSettlement">� روش تسویه با سورس:</label>
+                    <label for="sourceSettlement">  روش تسویه با سورس:</label>
                     <select id="sourceSettlement" onchange="calculateTransaction();">
                         <option value="">-- انتخاب کنید --</option>
                         <option value="exchange-usdt">تتر صرافی</option>
@@ -890,7 +890,9 @@
             lockedSellingRate: 0,
             isRateLocked: false,
             currentStep: 1,
-            remainingSeconds: 300
+            remainingSeconds: 300,
+            isSaving: false, // جلوگیری از ذخیره تکراری
+            lastSavedTime: null // زمان آخرین ذخیره
         };
 
         // ========================================
@@ -1362,6 +1364,19 @@
         // ✅ Finalize Transaction
         // ========================================
         async function finalizeTransaction() {
+            // جلوگیری از ذخیره تکراری
+            if (state.isSaving) {
+                showToast('⏳ در حال ذخیره... لطفاً صبر کنید', 'warning');
+                return;
+            }
+            
+            // جلوگیری از ذخیره مجدد در 5 ثانیه اخیر
+            const now = Date.now();
+            if (state.lastSavedTime && (now - state.lastSavedTime) < 5000) {
+                showToast('⚠️ معامله قبلاً ذخیره شده است', 'warning');
+                return;
+            }
+            
             const customerName = document.getElementById('customerName').value;
             const notes = document.getElementById('notes').value;
 
@@ -1369,6 +1384,9 @@
                 showToast('⚠️ نام مشتری را وارد کنید', 'warning');
                 return;
             }
+            
+            // علامت‌گذاری شروع ذخیره
+            state.isSaving = true;
 
             // جمع‌آوری اطلاعات
             const cnyAmount = parseFloat(document.getElementById('cnyAmount').value) || 0;
@@ -1455,6 +1473,10 @@
                 if (response.type === 'opaqueredirect' || response.status === 0) {
                     console.log('✅ Data saved successfully (redirect detected)');
                     
+                    // ثبت زمان ذخیره موفق
+                    state.lastSavedTime = Date.now();
+                    state.isSaving = false;
+                    
                     // به مرحله 5 برو
                     updateProgressStep(5);
                     showToast('✅ معامله با موفقیت ذخیره شد', 'success');
@@ -1484,6 +1506,10 @@
                     throw new Error(responseData?.error || 'Failed to save transaction');
                 }
 
+                // ثبت زمان ذخیره موفق
+                state.lastSavedTime = Date.now();
+                state.isSaving = false;
+
                 // به مرحله 5 برو
                 updateProgressStep(5);
 
@@ -1500,6 +1526,7 @@
 
             } catch (error) {
                 console.error('Error saving transaction:', error);
+                state.isSaving = false; // در صورت خطا، flag رو ریست کن
                 showToast('❌ خطا در ذخیره معامله: ' + error.message, 'error');
             }
         }
@@ -1529,9 +1556,23 @@
             let html = '';
 
             records.forEach((record, index) => {
-                const profit = parseFloat(record[19]) || 0; // ستون سود/زیان نهایی
+                // ساختار 27 ستونی Google Sheet (index از 0 شروع میشه)
+                // 0: تاریخ/زمان، 1: تاریخ شمسی، 2: نام مشتری، 3: مقدار یوآن
+                // 4: مبلغ محاسبه شده، 5: مبلغ واقعی دریافتی، 6: مابه‌التفاوت
+                // 16: نرخ فروش نهایی، 19: روش تسویه مشتری، 21: تتر مورد نیاز
+                // 24: سود/زیان نهایی، 25: وضعیت معامله، 26: توضیحات
+                
+                const profit = parseFloat(record[24]) || 0; // ستون 25: سود/زیان نهایی
                 const isProfitable = profit >= 0;
-                const status = record[21] || '⏳ پیش‌فاکتور';
+                const status = record[25] || '⏳ پیش‌فاکتور'; // ستون 26: وضعیت
+                const customerName = record[2] || 'بدون نام'; // ستون 3: نام مشتری
+                const persianDate = record[1] || '-'; // ستون 2: تاریخ شمسی
+                const cnyAmount = parseFloat(record[3] || 0); // ستون 4: مقدار یوآن
+                const actualAmount = parseFloat(record[5] || 0); // ستون 6: مبلغ واقعی دریافتی
+                const finalRate = parseFloat(record[16] || 0); // ستون 17: نرخ فروش نهایی
+                const usdtNeeded = parseFloat(record[21] || 0); // ستون 22: تتر مورد نیاز
+                const customerSettlement = record[19] || '-'; // ستون 20: روش تسویه مشتری
+                const notes = record[26] || ''; // ستون 27: توضیحات
 
                 html += `
                     <div class="record-item">
@@ -1541,18 +1582,18 @@
                                     ${isProfitable ? '✅ سودآور' : '⚠️ زیان‌ده'}
                                 </span>
                                 <span class="record-badge info">${status}</span>
-                                <span style="font-weight: 600; color: #667eea; margin-right: 8px;">${record[2] || 'بدون نام'}</span>
+                                <span style="font-weight: 600; color: #667eea; margin-right: 8px;">${customerName}</span>
                             </div>
-                            <span style="font-size: 0.8rem; color: #6c757d;">📅 ${record[1] || '-'}</span>
+                            <span style="font-size: 0.8rem; color: #6c757d;">📅 ${persianDate}</span>
                         </div>
                         <div class="record-content">
-                            <div class="record-field">💵 <strong>یوآن:</strong> ${parseFloat(record[3] || 0).toLocaleString('fa-IR')}</div>
-                            <div class="record-field">💰 <strong>تومان:</strong> ${parseFloat(record[4] || 0).toLocaleString('fa-IR')}</div>
-                            <div class="record-field">📊 <strong>نرخ فروش:</strong> ${parseFloat(record[14] || 0).toLocaleString('fa-IR')}</div>
-                            <div class="record-field">💎 <strong>تتر:</strong> ${parseFloat(record[20] || 0).toFixed(2)} USDT</div>
+                            <div class="record-field">💵 <strong>یوآن:</strong> ${cnyAmount.toLocaleString('fa-IR')}</div>
+                            <div class="record-field">💰 <strong>تومان:</strong> ${Math.round(actualAmount).toLocaleString('fa-IR')}</div>
+                            <div class="record-field">📊 <strong>نرخ فروش:</strong> ${Math.round(finalRate).toLocaleString('fa-IR')}</div>
+                            <div class="record-field">💎 <strong>تتر:</strong> ${usdtNeeded.toFixed(2)} USDT</div>
                             <div class="record-field">🎯 <strong>سود:</strong> <span style="color: ${isProfitable ? '#28a745' : '#dc3545'}; font-weight: 700;">${Math.round(profit).toLocaleString('fa-IR')} تومان</span></div>
-                            <div class="record-field">🏦 <strong>تسویه مشتری:</strong> ${record[17] || '-'}</div>
-                            ${record[22] ? `<div class="record-field" style="grid-column: 1/-1;">📝 <strong>یادداشت:</strong> ${record[22]}</div>` : ''}
+                            <div class="record-field">🏦 <strong>تسویه مشتری:</strong> ${customerSettlement}</div>
+                            ${notes ? `<div class="record-field" style="grid-column: 1/-1;">📝 <strong>توضیحات:</strong> ${notes}</div>` : ''}
                         </div>
                     </div>
                 `;
@@ -1577,6 +1618,8 @@
             state.costRate = 0;
             state.lockedSellingRate = 0;
             state.isRateLocked = false;
+            state.isSaving = false;
+            state.lastSavedTime = null;
 
             // ریست UI
             document.getElementById('costRateDisplay').style.display = 'none';
