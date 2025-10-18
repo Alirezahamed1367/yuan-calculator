@@ -1445,10 +1445,31 @@
                 
                 const response = await fetch(url, {
                     method: 'GET',
-                    redirect: 'follow'
+                    redirect: 'manual'
                 });
 
                 console.log('Response status:', response.status);
+                console.log('Response type:', response.type);
+                
+                // اگر redirect شد (status 0)، یعنی موفق بوده
+                if (response.type === 'opaqueredirect' || response.status === 0) {
+                    console.log('✅ Data saved successfully (redirect detected)');
+                    
+                    // به مرحله 5 برو
+                    updateProgressStep(5);
+                    showToast('✅ معامله با موفقیت ذخیره شد', 'success');
+
+                    // بارگذاری مجدد تراکنش‌ها
+                    setTimeout(() => {
+                        loadLastTransactions();
+                        // پیشنهاد ریست
+                        if (confirm('معامله ثبت شد. آیا می‌خواهید صفحه را برای معامله جدید ریست کنید؟')) {
+                            resetPage();
+                        }
+                    }, 2000);
+                    
+                    return;
+                }
                 
                 // چک کردن response
                 let responseData;
