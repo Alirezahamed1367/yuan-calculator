@@ -128,8 +128,10 @@
         }
 
         .input-group input:disabled {
-            background: #e9ecef;
+            background: #e9ecef !important;
             cursor: not-allowed;
+            opacity: 0.7;
+            border-color: #ced4da;
         }
 
         .rate-display {
@@ -199,13 +201,14 @@
         }
 
         .btn-warning {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            color: #212529;
+            font-weight: 700;
         }
 
         .btn-warning:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
         }
 
         .btn-danger {
@@ -1161,7 +1164,10 @@
             const sellingRate = parseFormattedNumber(document.getElementById('sellingRate').value);
             const lockBtn = document.getElementById('lockRateBtn');
 
-            if (state.costRate > 0 && sellingRate > 0) {
+            // اگر قفل است، دکمه همیشه فعال باشد (برای باز کردن)
+            if (state.isRateLocked) {
+                lockBtn.disabled = false;
+            } else if (state.costRate > 0 && sellingRate > 0) {
                 lockBtn.disabled = false;
             } else {
                 lockBtn.disabled = true;
@@ -1169,25 +1175,65 @@
         }
 
         function lockSellingRate() {
-            const sellingRate = parseFormattedNumber(document.getElementById('sellingRate').value);
+            const sellingRateInput = document.getElementById('sellingRate');
+            const competitorRateInput = document.getElementById('competitorRate');
+            const lockBtn = document.getElementById('lockRateBtn');
+            const lockedDisplay = document.getElementById('lockedRateDisplay');
+            
+            if (!state.isRateLocked) {
+                // حالت قفل کردن
+                const sellingRate = parseFormattedNumber(sellingRateInput.value);
+                
+                if (!sellingRate || sellingRate <= 0) {
+                    showToast('❌ ابتدا نرخ فروش معتبری وارد کنید', 'error');
+                    return;
+                }
 
-            if (sellingRate === 0) {
-                showToast('⚠️ نرخ فروش را وارد کنید', 'warning');
-                return;
+                // قفل کردن فیلدها (هم نرخ فروش و هم نرخ رقیب برای حفظ تحلیل رقابتی)
+                sellingRateInput.disabled = true;
+                competitorRateInput.disabled = true;
+                
+                // ذخیره نرخ قفل شده
+                state.lockedSellingRate = sellingRate;
+                state.isRateLocked = true;
+                
+                // تغییر متن و ظاهر کلید
+                lockBtn.innerHTML = '🔓 باز کردن نرخ فروش';
+                lockBtn.className = 'btn btn-warning';
+                
+                // نمایش نرخ قفل شده
+                document.getElementById('lockedRateValue').textContent = Math.round(sellingRate).toLocaleString('fa-IR');
+                lockedDisplay.style.display = 'block';
+                
+                // به مرحله 2 برو
+                updateProgressStep(2);
+                
+                showToast('✅ نرخ فروش قفل شد', 'success');
+                
+            } else {
+                // حالت باز کردن
+                sellingRateInput.disabled = false;
+                competitorRateInput.disabled = false;
+                
+                // ریست کردن state
+                state.isRateLocked = false;
+                state.lockedSellingRate = 0;
+                
+                // تغییر متن و ظاهر کلید
+                lockBtn.innerHTML = '🔒 قفل و تایید نرخ فروش';
+                lockBtn.className = 'btn btn-success';
+                
+                // مخفی کردن نمایش قفل
+                lockedDisplay.style.display = 'none';
+                
+                // بازگشت به مرحله 1
+                updateProgressStep(1);
+                
+                showToast('🔓 نرخ فروش باز شد - میتوانید ویرایش کنید', 'warning');
+                
+                // فوکوس روی فیلد نرخ فروش
+                sellingRateInput.focus();
             }
-
-            state.lockedSellingRate = sellingRate;
-            state.isRateLocked = true;
-
-            document.getElementById('lockedRateValue').textContent = Math.round(sellingRate).toLocaleString('fa-IR');
-            document.getElementById('lockedRateDisplay').style.display = 'block';
-            document.getElementById('lockRateBtn').disabled = true;
-            document.getElementById('sellingRate').disabled = true;
-
-            // به مرحله 2 برو
-            updateProgressStep(2);
-
-            showToast('✅ نرخ فروش قفل شد', 'success');
         }
 
         // ========================================
@@ -1627,7 +1673,13 @@
             document.getElementById('lockedRateDisplay').style.display = 'none';
             document.getElementById('transactionCalculations').style.display = 'none';
             document.getElementById('personalUsdtGroup').style.display = 'none';
-            document.getElementById('lockRateBtn').disabled = true;
+            
+            // ریست دکمه قفل
+            const lockBtn = document.getElementById('lockRateBtn');
+            lockBtn.disabled = true;
+            lockBtn.innerHTML = '🔒 قفل و تایید نرخ فروش';
+            lockBtn.className = 'btn btn-success';
+            
             document.getElementById('finalizeBtn').disabled = true;
 
             // ریست progress
